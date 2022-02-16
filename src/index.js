@@ -1,14 +1,26 @@
-const { default: axios } = require("axios")
-const http = require("http")
-const rss = require('./rss.ts')
+const axios = require("axios");
+const http = require("http");
+const rss = require("./rss.ts");
+const { larkUrl, feedUrl } = require("./constants");
 
-const feedUrl = "https://github.com/solana-labs/solana-web3.js/releases.atom";
-const larkUrl = "https://open.larksuite.com/open-apis/bot/v2/hook/4374b8b5-bd42-4ff1-b020-194e33fa728a";
+// route：新增larkUrl和feedUrl对。POST，params：larkUrl，feedUrl
+/**
+ * 数据库表结构：
+ * larkUrl: String
+ * feedUrl: String
+ * lastFetched: Timestamp
+ */
 
+// pm2 设置lifecycle management和自动重启。
 const app = http.createServer(async (request, response) => {
-  console.log("hello")
+  // 每隔10分钟循环从数据库中获取列表，
+  console.log("hello");
   const feeds = await rss.getRssFeed(feedUrl);
-  console.log(feeds)
+
+  // 将获取的数据与数据库中的数据进行比较，如果有不同，更新数据。
+
+
+  // 发送新的数据到相应的channel
   feeds.items.slice(0, 1).forEach(async (entry) => {
     const response = await axios.post(
       larkUrl,
