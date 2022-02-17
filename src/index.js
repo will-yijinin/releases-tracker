@@ -20,7 +20,7 @@ const app = http.createServer(async (request, response) => {
   console.log("hit app");
 
   const client = new Client({
-    connectionString: "DATABASE_URL",
+    connectionString: "postgres://zagqvwlvhksruv:f42ac867b90883c857ac488ab07839cabe90ab4fa458fcd15d5f79debf365138@ec2-54-155-194-191.eu-west-1.compute.amazonaws.com:5432/d5n63h01h3rse1",
     ssl: true
   })
 
