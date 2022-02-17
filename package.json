@@ -4,7 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "ts-node ./src/index.js"
+    "start": "ts-node ./src/index.js",
+    "i": "rm -rf node_modules && npm i",
+		"tsc": "npm run clean && tsc",
+		"clean": "rm -rf build",
+		"pub": "npm run tsc && npm publish",
+		"build": "rm -rf build && tsc"
   },
   "author": "",
   "license": "ISC",

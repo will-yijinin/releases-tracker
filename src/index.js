@@ -39,8 +39,9 @@ const app = http.createServer(async (request, response) => {
     );
     console.log(response.data)
   });
-})
+});
 
 console.log("Started Server...")
-app.listen(8000)
-console.log("Listening on http://127.0.0.1:8000")
+const port = process.env.PORT || 8000;
+app.listen(port);
+console.log(`Listening on http://127.0.0.1:${port}`);
