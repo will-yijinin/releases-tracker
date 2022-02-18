@@ -4,7 +4,6 @@ const concat = require("concat-stream");
 
 export async function main() {
 
-	// TODO: 每隔10分钟循环从数据库中获取列表
 	const feedList = await rss.listSubscriptions();
 	console.log(feedList)
 
