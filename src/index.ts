@@ -12,9 +12,9 @@ app.get("/", [
 	main,
 ]);
 
-// TODO: route：新增feed subscription。POST，params：larkUrl，feedUrl
-app.post("add/feed", [
-	
+// TODO: 测试非法地址
+app.post("/add/feed", [
+	addFeed
 ]);
 
 rss.init().then(() => {

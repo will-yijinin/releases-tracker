@@ -1,10 +1,8 @@
 const axios = require("axios");
 const rss = require("./rss.ts");
-// const { larkUrl } = require("./constants");
+const concat = require("concat-stream");
 
 export async function main() {
-
-	// await rss.subscribe("https://github.com/solana-labs/solana/releases.atom", larkUrl);
 
 	// TODO: 每隔10分钟循环从数据库中获取列表
 	const feedList = await rss.listSubscriptions();
@@ -87,6 +85,22 @@ export async function main() {
 	}
 };
 
-// export async function addFeed(req, res, next){
-
-// }
+export async function addFeed(req, res){
+	req.pipe(
+		concat(async data => {
+			if (data.length === 0) {
+				return res.sendStatus(400);
+			}
+			let { larkUrl, feedUrls } = JSON.parse(data.toString());
+			try{
+				for(let i=0; i<feedUrls.length; i++){
+					const feedUrl = feedUrls[i];
+					await rss.subscribe(feedUrl, larkUrl);
+				}
+				res.send({code:200, message:"success"});
+			}catch(error){
+				res.send({code:500, message:error});
+			}
+		})
+	);
+};
