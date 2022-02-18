@@ -21,7 +21,15 @@ export function getRssFeed(feedUrl) {
     });
 };
 
+/**
+ * 数据库表结构：
+ * larkUrl: String
+ * feedUrl: String
+ * lastFetched: Timestamp
+ * newestFeed: Feed
+ */
 export async function init(){
+    // TODO: check if already connected, if so, do not connect. Or use pool.
     await client.connect();
     await client.query(
         `CREATE TABLE IF NOT EXISTS ${tableName} (
@@ -70,11 +78,9 @@ export async function getNewestFeed(feedUrl) {
     return res.rows[0].newest_feed;
 };
 
-export async function listSubscriptions(feedUrl) {
+export async function listSubscriptions() {
     let res = await client.query(
-        `SELECT feed_url, lark_url, newest_feed from ${tableName}
-        WHERE feed_url=$1`,
-        [feedUrl]
+        `SELECT feed_url, lark_url, last_fetched, newest_feed from ${tableName}`,
     );
     return res.rows;
 };
