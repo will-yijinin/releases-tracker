@@ -2,7 +2,6 @@ const axios = require("axios");
 const http = require("http");
 const rss = require("./rss.ts");
 const { larkUrl } = require("./constants");
-const { default: list } = require("./list");
 
 // TODO: route：新增feed subscription。POST，params：larkUrl，feedUrl
 

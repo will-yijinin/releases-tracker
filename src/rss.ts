@@ -1,9 +1,12 @@
 import RSSParser from "rss-parser";
-const { Client } = require('pg');
+const { Pool } = require('pg');
 
-const client = new Client({
+// 使用Pool解决reconnect问题
+const client = new Pool({
     connectionString: "postgres://zagqvwlvhksruv:f42ac867b90883c857ac488ab07839cabe90ab4fa458fcd15d5f79debf365138@ec2-54-155-194-191.eu-west-1.compute.amazonaws.com:5432/d5n63h01h3rse1",
-    ssl: true
+    ssl: true,
+    connectionTimeoutMillis: 5000,
+    max : 5
 });
 
 // TODO: error: duplicate key value violates unique constraint "releases7_pkey"
@@ -30,7 +33,6 @@ export function getRssFeed(feedUrl) {
  * newestFeed: Feed
  */
 export async function init(){
-    // TODO: check if already connected, if so, do not connect. Or use pool. 刷新页面复现
     await client.connect();
     await client.query(
         `CREATE TABLE IF NOT EXISTS ${tableName} (
