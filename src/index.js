@@ -1,6 +1,7 @@
 const axios = require("axios");
 const http = require("http");
 const rss = require("./rss.ts");
+const { larkUrl } = require("./constants");
 const { default: list } = require("./list");
 
 // TODO: route：新增feed subscription。POST，params：larkUrl，feedUrl
@@ -8,6 +9,8 @@ const { default: list } = require("./list");
 // pm2 设置lifecycle management和自动重启。
 const app = http.createServer(async (request, response) => {
 	await rss.init();
+
+	// await rss.subscribe("https://github.com/solana-labs/solana/releases.atom", larkUrl);
 
 	// TODO: 每隔10分钟循环从数据库中获取列表
 	const feedList = await rss.listSubscriptions();
@@ -44,13 +47,40 @@ const app = http.createServer(async (request, response) => {
 				const response = await axios.post(
 					lark_url,
 					{
-						"msg_type": "text",
+						"msg_type": "post",
 						"content": {
-							// TODO: Slack format
-							// fetchedFeeds.title: Release notes from solana-web3.js
-							// <a href="updatedFeeds[k].link">updatedFeeds[k].title<a>
-							// updatedFeeds[k].content
-							"text": updatedFeeds[k].content
+							"post": {
+								"zh_cn": {
+									"title": fetchedFeeds.title,
+									"content": [
+										[
+											{
+												"tag": "a",
+												"text": updatedFeeds[k].title,
+												"href": updatedFeeds[k].link,
+											},
+										],
+										[
+											{
+												"tag": "text",
+												"text": new Date(updatedFeeds[k].pubDate).toLocaleString(),
+											},
+										],
+										[
+											{
+												"tag": "text",
+												"text": "",
+											},
+										],
+										[
+											{
+												"tag": "text",
+												"text": updatedFeeds[k].contentSnippet
+											}
+										]
+									]
+								}
+							}
 						}
 					}
 				);

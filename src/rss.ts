@@ -6,7 +6,8 @@ const client = new Client({
     ssl: true
 });
 
-const tableName = "releases3"
+// TODO: error: duplicate key value violates unique constraint "releases7_pkey"
+const tableName = "releases11"
 
 export function getRssFeed(feedUrl) {
     let parser = new RSSParser();
@@ -29,7 +30,7 @@ export function getRssFeed(feedUrl) {
  * newestFeed: Feed
  */
 export async function init(){
-    // TODO: check if already connected, if so, do not connect. Or use pool.
+    // TODO: check if already connected, if so, do not connect. Or use pool. 刷新页面复现
     await client.connect();
     await client.query(
         `CREATE TABLE IF NOT EXISTS ${tableName} (
