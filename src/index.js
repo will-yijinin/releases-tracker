@@ -3,13 +3,13 @@ const http = require("http");
 const rss = require("./rss.ts");
 const { default: list } = require("./list");
 
-// route：新增larkUrl和feedUrl对。POST，params：larkUrl，feedUrl
+// TODO: route：新增feed subscription。POST，params：larkUrl，feedUrl
 
 // pm2 设置lifecycle management和自动重启。
 const app = http.createServer(async (request, response) => {
 	await rss.init();
 
-	// 每隔10分钟循环从数据库中获取列表
+	// TODO: 每隔10分钟循环从数据库中获取列表
 	const feedList = await rss.listSubscriptions();
 	// console.log(feedList)
 
@@ -24,7 +24,12 @@ const app = http.createServer(async (request, response) => {
 		const updatedFeeds = [];
 		for(let j=0; j<fetchedFeeds?.items?.length; j++){
 			const item = fetchedFeeds?.items?.[j];
-			const newestFeedTitle = newest_feed && JSON.parse(newest_feed).title;
+			// 如果newest_feed不存在，则说明第一次推送，只推送最近一条更新即可
+			if(!newest_feed){
+				updatedFeeds.push(item);
+				break;
+			}
+			const newestFeedTitle = JSON.parse(newest_feed)?.title;
 			if(newestFeedTitle!==item?.title){
 				updatedFeeds.push(item);
 			}else{
@@ -41,7 +46,7 @@ const app = http.createServer(async (request, response) => {
 					{
 						"msg_type": "text",
 						"content": {
-							// Slack format
+							// TODO: Slack format
 							// fetchedFeeds.title: Release notes from solana-web3.js
 							// <a href="updatedFeeds[k].link">updatedFeeds[k].title<a>
 							// updatedFeeds[k].content

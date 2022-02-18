@@ -41,10 +41,10 @@ export async function init(){
     );
 }
 
-export async function subscribe(feedUrl, larkUrl, newestFeed) {
+export async function subscribe(feedUrl, larkUrl) {
     let res = await client.query(
-        `INSERT INTO ${tableName}(feed_url,lark_url, newest_feed) VALUES ($1, $2, $3)`,
-        [feedUrl, larkUrl, newestFeed]
+        `INSERT INTO ${tableName}(feed_url,lark_url) VALUES ($1, $2)`,
+        [feedUrl, larkUrl]
     );
     return res;
 };
