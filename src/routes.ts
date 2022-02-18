@@ -1,20 +1,14 @@
-require("dotenv/config");
 const axios = require("axios");
-const http = require("http");
 const rss = require("./rss.ts");
-const { larkUrl } = require("./constants");
+// const { larkUrl } = require("./constants");
 
-// TODO: route：新增feed subscription。POST，params：larkUrl，feedUrl
-
-// pm2 设置lifecycle management和自动重启。
-const app = http.createServer(async (request, response) => {
-	await rss.init();
+export async function main() {
 
 	// await rss.subscribe("https://github.com/solana-labs/solana/releases.atom", larkUrl);
 
 	// TODO: 每隔10分钟循环从数据库中获取列表
 	const feedList = await rss.listSubscriptions();
-	// console.log(feedList)
+	console.log(feedList)
 
 	for (let i = 0; i < feedList.length; i++) {
 		const { feed_url, lark_url, newest_feed } = feedList[i];
@@ -24,7 +18,7 @@ const app = http.createServer(async (request, response) => {
 		// console.log(fetchedFeeds)
 
 		// 将获取的数据与数据库中的数据进行比较，如果有不同，更新数据库中的数据。同时记录上次发送请求的时间
-		const updatedFeeds = [];
+		const updatedFeeds: any[] = [];
 		for(let j=0; j<fetchedFeeds?.items?.length; j++){
 			const item = fetchedFeeds?.items?.[j];
 			// 如果newest_feed不存在，则说明第一次推送，只推送最近一条更新即可
@@ -39,7 +33,7 @@ const app = http.createServer(async (request, response) => {
 				break;
 			}
 		}
-		// console.log(updatedFeeds)
+		console.log(updatedFeeds)
 
 		// 发送新的数据到相应的lark channel
 		if(updatedFeeds.length>0 && updatedFeeds[0]){
@@ -91,9 +85,8 @@ const app = http.createServer(async (request, response) => {
 			rss.changeNewestFeed(feed_url, updatedFeeds[0]);
 		}
 	}
-});
+};
 
-console.log("Started Server...")
-const port = process.env.PORT || 8000;
-app.listen(port);
-console.log(`Listening on http://127.0.0.1:${port}`);
+// export async function addFeed(req, res, next){
+
+// }
