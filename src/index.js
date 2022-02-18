@@ -1,3 +1,4 @@
+require("dotenv/config");
 const axios = require("axios");
 const http = require("http");
 const rss = require("./rss.ts");
