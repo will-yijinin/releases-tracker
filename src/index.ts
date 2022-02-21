@@ -24,10 +24,6 @@ rss.init().then(() => {
 		console.log("Started Server...");
 		console.log(`Listening on http://127.0.0.1:${port}`);
 	});
-
-	process.on('SIGINT', function() {
-		process.exit(0);
-	});
 }).catch((e) => {
 	console.log(e);
 });
