@@ -16,8 +16,7 @@ module.exports = {
     out_file: "./logs/output.log",
     error_file: "./logs/error.log",
     max_memory_restart: "200M"
-  }],
-
+  }]
   // deploy : {
   //   production : {
   //     user : 'SSH_USERNAME',
