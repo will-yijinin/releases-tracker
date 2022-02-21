@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "pm2 start ecosystem.config.js",
+    "test": "pm2 start ecosystem.config.js",
     "ls": "pm2 ls",
     "stop": "pm2 delete release",
-    "test": "export NODE_TLS_REJECT_UNAUTHORIZED='0' && ts-node -r dotenv/config ./src/index.ts",
+    "start": "export NODE_TLS_REJECT_UNAUTHORIZED='0' && ts-node -r dotenv/config ./src/index.ts",
     "i": "rm -rf node_modules && npm i",
     "tsc": "npm run clean && tsc",
     "clean": "rm -rf build",
