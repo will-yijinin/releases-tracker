@@ -14,8 +14,8 @@ app.post("/add/feed", [
 rss.init().then(() => {
   	console.log("Connected to db");
 
-	// TODO 每隔10分钟循环从数据库中获取列表
-	cron.schedule('*/3 * * * *', () => {
+	// 每隔10分钟循环从数据库中获取列表
+	cron.schedule('*/10 * * * *', () => {
 		// running a task every ten minutes
 		main();
 	});
