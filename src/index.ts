@@ -7,7 +7,6 @@ const cron = require('node-cron');
 const app = express();
 const port = process.env.PORT || 8000;
 
-// TODO: 测试非法地址
 app.post("/add/feed", [
 	addFeed
 ]);

@@ -94,11 +94,26 @@ export async function addFeed(req, res){
 			try{
 				for(let i=0; i<feedUrls.length; i++){
 					const feedUrl = feedUrls[i];
+					// 若是非法地址，无法获取feed，抛错404
+					await rss.getRssFeed(feedUrl);
 					await rss.subscribe(feedUrl, larkUrl);
 				}
 				res.send({code:200, message:"success"});
-			}catch(error){
-				res.send({code:500, message:error});
+			}catch(error: any){
+				let code = error.code;
+				let msg;
+				switch(code){
+					case "23505":
+						msg = error.detail;
+						break;
+					default:
+						msg = error;
+				}
+				if(error.message.includes("404")){
+					code = "404";
+					msg = "无法保存该订阅，请检查链接是否正确";
+				}
+				res.send({code, message: msg});
 			}
 		})
 	);
