@@ -11,8 +11,8 @@ const client = new Pool({
     max : 5
 });
 
-// TODO: error: duplicate key value violates unique constraint "releases7_pkey"
-const tableName = "releases11"
+// TODO: error: duplicate key value violates unique constraint "releases_pkey"
+const tableName = "releases"
 
 export function getRssFeed(feedUrl) {
     let parser = new RSSParser();
@@ -88,4 +88,11 @@ export async function listSubscriptions() {
         `SELECT feed_url, lark_url, last_fetched, newest_feed from ${tableName}`,
     );
     return res.rows;
+};
+
+export async function deleteTable(tableName) {
+    let res = await client.query(
+        `DROP TABLE IF EXISTS ${tableName}`,
+    );
+    return res;
 };

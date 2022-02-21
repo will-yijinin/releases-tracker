@@ -4,8 +4,6 @@ const express = require("express");
 const { main, addFeed } = require("./routes");
 const cron = require('node-cron');
 
-// TODO: pm2 设置lifecycle management和自动重启。
-
 const app = express();
 const port = process.env.PORT || 8000;
 
@@ -26,6 +24,10 @@ rss.init().then(() => {
 	app.listen(port, () => {
 		console.log("Started Server...");
 		console.log(`Listening on http://127.0.0.1:${port}`);
+	});
+
+	process.on('SIGINT', function() {
+		process.exit(0);
 	});
 }).catch((e) => {
 	console.log(e);
