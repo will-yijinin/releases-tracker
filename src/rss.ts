@@ -1,11 +1,18 @@
 import RSSParser from "rss-parser";
 const { Pool } = require("pg");
-// const { DATABASE_URL } = require("./mock-data.js");
+
+const fs = require("fs");
+const path = "./mock-data.js";
+let localData: any = {};
+if (fs.existsSync(path)) {
+    // path exists
+    localData = require(path);
+}
+const { DATABASE_URL } = localData;
 
 // 使用Pool解决reconnect问题
 const client = new Pool({
-    connectionString: process.env.DATABASE_URL,
-        // || DATABASE_URL,
+    connectionString: process.env.DATABASE_URL || DATABASE_URL,
     ssl: true,
     // Timeout: 60 seconds
     connectionTimeoutMillis: 60000,
