@@ -123,8 +123,7 @@ export async function deleteFeed(req, res){
 	req.pipe(
 		concat(async data => {
 			let { feedUrls } = JSON.parse(data.toString());
-			console.log(feedUrls)
-			res.send({code:200, message:"success"});
+			res.send({code:200, message:"success", data: feedUrls});
 		})
 	);
 };
