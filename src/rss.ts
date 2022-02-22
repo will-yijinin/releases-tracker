@@ -70,11 +70,11 @@ export async function unSubscribe(feedUrl) {
     return res;
 };
 
-export async function changeNewestFeed(feedUrl, newestFeed) {
+export async function changeNewestFeed(feedUrl, newestFeed, nodeVersion) {
     let res = await client.query(
-        `UPDATE ${tableName} SET newest_feed = $2
+        `UPDATE ${tableName} SET newest_feed = $2, node_version = $3
         WHERE feed_url=$1`,
-        [feedUrl, newestFeed]
+        [feedUrl, newestFeed, nodeVersion]
     );
     return res;
 };

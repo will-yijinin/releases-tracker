@@ -4,22 +4,22 @@ const concat = require("concat-stream");
 
 export async function main() {
 
-	const feedList = await rss.listSubscriptions();
-	// console.log(feedList)
+	const subscriptions = await rss.listSubscriptions();
+	// console.log(subscriptions);
 
-	for (let i = 0; i < feedList.length; i++) {
-		const { feed_url, lark_url, newest_feed } = feedList[i];
+	for (let i = 0; i < subscriptions.length; i++) {
+		const { feed_url, lark_url, newest_feed } = subscriptions[i];
 
 		// 根据列表，http请求获取最新feeds
 		const fetchedFeeds = await rss.getRssFeed(feed_url);
-		// console.log(fetchedFeeds)
+		// console.log(fetchedFeeds);
 
 		const updatedFeeds: any[] = [];
 		// 如果数据库中的newest_feed字段不存在，说明是新的subscription，只推送最近一条更新即可
 		if(!newest_feed){
 			updatedFeeds.push(fetchedFeeds?.items?.[0]);
 		}else{
-			// 将获取的数据与数据库中的newest_eed进行比较，记录不同的feeds
+			// 将获取的数据与数据库中的newest_feed进行比较，记录不同的feeds
 			for(let j=0; j<fetchedFeeds?.items?.length; j++){
 				const item = fetchedFeeds?.items?.[j];
 				const newestFeedId = JSON.parse(newest_feed)?.id;
@@ -79,7 +79,14 @@ export async function main() {
 			}
 
 			// 更新当前feed_url最新的newest_feed
-			rss.changeNewestFeed(feed_url, updatedFeeds[0]);
+			const updateFeed = updatedFeeds[0];
+			const array = updateFeed?.link?.split("/");
+			let nodeVersion = array?.[array?.length-1];
+			if(nodeVersion.substring(0,1).toLowerCase()==="v"){
+				nodeVersion = nodeVersion.substring(1);
+			}
+
+			rss.changeNewestFeed(feed_url, updateFeed, nodeVersion);
 		}
 	}
 };
