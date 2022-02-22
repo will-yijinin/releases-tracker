@@ -23,8 +23,8 @@ export async function main() {
 				updatedFeeds.push(item);
 				break;
 			}
-			const newestFeedTitle = JSON.parse(newest_feed)?.title;
-			if(newestFeedTitle!==item?.title){
+			const newestFeedId = JSON.parse(newest_feed)?.id;
+			if(newestFeedId!==item?.id){
 				updatedFeeds.push(item);
 			}else{
 				break;
