@@ -118,3 +118,13 @@ export async function addFeed(req, res){
 		})
 	);
 };
+
+export async function deleteFeed(req, res){
+	req.pipe(
+		concat(async data => {
+			let { feedUrls } = JSON.parse(data.toString());
+			console.log(feedUrls)
+			res.send({code:200, message:"success"});
+		})
+	);
+};

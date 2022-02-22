@@ -1,7 +1,7 @@
 require("dotenv/config");
 const rss = require("./rss");
 const express = require("express");
-const { main, addFeed } = require("./routes");
+const { main, addFeed, deleteFeed } = require("./routes");
 const cron = require('node-cron');
 
 const app = express();
@@ -9,6 +9,10 @@ const port = process.env.PORT || 8000;
 
 app.post("/add/feed", [
 	addFeed
+]);
+
+app.post("/delete/feed", [
+	deleteFeed
 ]);
 
 rss.init().then(() => {
