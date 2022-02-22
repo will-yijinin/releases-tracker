@@ -18,10 +18,10 @@ app.post("/delete/feed", [
 rss.init().then(() => {
   	console.log("Connected to db");
 
-	// 每隔10分钟循环从数据库中获取列表
-	cron.schedule('*/10 * * * *', () => {
-		// running a task every ten minutes
-		main();
+	// running a task every ten minutes
+	cron.schedule('*/10 * * * *', async () => {
+		// 每隔10分钟循环从数据库中获取列表
+		await main();
 	});
 
 	app.listen(port, () => {

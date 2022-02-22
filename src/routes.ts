@@ -87,7 +87,7 @@ export async function main() {
 				nodeVersion = nodeVersion.substring(1);
 			}
 
-			rss.changeNewestFeed(feed_url, updateFeed, nodeVersion);
+			await rss.changeNewestFeed(feed_url, updateFeed, nodeVersion);
 		}
 	}
 };
