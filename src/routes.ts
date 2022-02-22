@@ -5,7 +5,7 @@ const concat = require("concat-stream");
 export async function main() {
 
 	const feedList = await rss.listSubscriptions();
-	console.log(feedList)
+	// console.log(feedList)
 
 	for (let i = 0; i < feedList.length; i++) {
 		const { feed_url, lark_url, newest_feed } = feedList[i];
@@ -30,7 +30,7 @@ export async function main() {
 				break;
 			}
 		}
-		console.log(updatedFeeds)
+		// console.log(updatedFeeds)
 
 		// 发送新的数据到相应的lark channel
 		if(updatedFeeds.length>0 && updatedFeeds[0]){
