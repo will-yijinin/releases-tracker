@@ -14,20 +14,20 @@ export async function main() {
 		const fetchedFeeds = await rss.getRssFeed(feed_url);
 		// console.log(fetchedFeeds)
 
-		// 将获取的数据与数据库中的数据进行比较，如果有不同，更新数据库中的数据。同时记录上次发送请求的时间
 		const updatedFeeds: any[] = [];
-		for(let j=0; j<fetchedFeeds?.items?.length; j++){
-			const item = fetchedFeeds?.items?.[j];
-			// 如果newest_feed不存在，则说明第一次推送，只推送最近一条更新即可
-			if(!newest_feed){
-				updatedFeeds.push(item);
-				break;
-			}
-			const newestFeedId = JSON.parse(newest_feed)?.id;
-			if(newestFeedId!==item?.id){
-				updatedFeeds.push(item);
-			}else{
-				break;
+		// 如果数据库中的newest_feed字段不存在，说明是新的subscription，只推送最近一条更新即可
+		if(!newest_feed){
+			updatedFeeds.push(fetchedFeeds?.items?.[0]);
+		}else{
+			// 将获取的数据与数据库中的newest_eed进行比较，记录不同的feeds
+			for(let j=0; j<fetchedFeeds?.items?.length; j++){
+				const item = fetchedFeeds?.items?.[j];
+				const newestFeedId = JSON.parse(newest_feed)?.id;
+				if(newestFeedId!==item?.id){
+					updatedFeeds.push(item);
+				}else{
+					break;
+				}
 			}
 		}
 		// console.log(updatedFeeds)
