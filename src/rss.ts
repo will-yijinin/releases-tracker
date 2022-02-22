@@ -2,7 +2,7 @@ import RSSParser from "rss-parser";
 const { Pool } = require("pg");
 
 const fs = require("fs");
-const path = "./mock-data.js";
+const path = `${__dirname}/mock-data.js`;
 let localData: any = {};
 if (fs.existsSync(path)) {
     // path exists
