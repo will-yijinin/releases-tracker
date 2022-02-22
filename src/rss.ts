@@ -104,3 +104,10 @@ export async function deleteTable(tableName) {
     );
     return res;
 };
+
+export async function addColumn(columnName, dataType) {
+    let res = await client.query(
+        `ALTER TABLE ${tableName} ADD COLUMN ${columnName} ${dataType}`,
+    );
+    return res;
+};
