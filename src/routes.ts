@@ -32,8 +32,9 @@ export async function main() {
 		}
 		// console.log(updatedFeeds)
 
-		// 发送新的数据到相应的lark channel
+		// 如果有新的feeds
 		if(updatedFeeds.length>0 && updatedFeeds[0]){
+			// 发送新的数据到相应的lark channel
 			for(let k=updatedFeeds.length-1; k>=0; k--){
 				const response = await axios.post(
 					lark_url,
