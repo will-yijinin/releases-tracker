@@ -9,8 +9,6 @@
     "stop": "pm2 delete release",
     "test": "export NODE_TLS_REJECT_UNAUTHORIZED='0' && export NODE_ENV='development' && ts-node -r dotenv/config ./src/index.ts",
     "i": "rm -rf node_modules && npm i",
-    "tsc": "npm run clean && tsc",
-    "clean": "rm -rf build",
     "pub": "npm run tsc && npm publish",
     "build": "rm -rf build && tsc"
   },
