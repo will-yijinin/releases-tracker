@@ -24,6 +24,7 @@ rss.init().then(() => {
 
 	// running a task every: dev - 1 minute, prod - 10 minutes
 	const timeRange = process.env.NODE_ENV="development" ? "1" : "10";
+	console.log(timeRange)
 	cron.schedule(`*/${timeRange} * * * *`, async () => {
 		// 生产: 每隔10分钟循环从数据库中获取列表
 		await main();
