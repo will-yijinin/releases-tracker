@@ -1,10 +1,11 @@
 const axios = require("axios");
-const rss = require("./rss.ts");
+const db = require("./db");
+const api = require("./api");
 const concat = require("concat-stream");
 
 export async function main() {
 
-	const subscriptions = await rss.listSubscriptions();
+	const subscriptions = await db.listSubscriptions();
 	// console.log(subscriptions);
 
 	for (let i = 0; i < subscriptions.length; i++) {
@@ -12,14 +13,14 @@ export async function main() {
 
 		// 更新运维节点版本
 		if(op_url){
-			const fetchedOpNodeVersion = await rss.getOpNodeVersion(op_url);
+			const fetchedOpNodeVersion = await api.getOpNodeVersion(op_url);
 			if(fetchedOpNodeVersion !== op_node_version){
-				await rss.updateOpNodeVersion(feed_url, fetchedOpNodeVersion);
+				await db.updateOpNodeVersion(feed_url, fetchedOpNodeVersion);
 			}
 		}
 
 		// 根据列表，http请求获取最新feeds
-		const fetchedFeeds = await rss.getRssFeed(feed_url);
+		const fetchedFeeds = await api.getRssFeed(feed_url);
 		// console.log(fetchedFeeds);
 
 		const updatedFeeds: any[] = [];
@@ -96,7 +97,7 @@ export async function main() {
 				nodeVersion = nodeVersion.substring(1);
 			}
 
-			await rss.updateNewestFeed(feed_url, updateFeed, nodeVersion);
+			await db.updateNewestFeed(feed_url, updateFeed, nodeVersion);
 		}
 	}
 };
@@ -112,8 +113,8 @@ export async function addFeed(req, res){
 				for(let i=0; i<feedUrls.length; i++){
 					const feedUrl = feedUrls[i];
 					// 若是非法地址，无法获取feed，抛错404
-					await rss.getRssFeed(feedUrl);
-					await rss.subscribe(feedUrl, larkUrl);
+					await api.getRssFeed(feedUrl);
+					await db.subscribe(feedUrl, larkUrl);
 				}
 				res.send({code:200, message:"success"});
 			}catch(error: any){
@@ -153,7 +154,7 @@ export async function updateOpUrl(req, res){
 			}
 			let { feedUrl, opUrl } = JSON.parse(data.toString());
 			try{
-				await rss.updateOpUrl(feedUrl, opUrl);
+				await db.updateOpUrl(feedUrl, opUrl);
 				res.send({code:200, message:"success"});
 			}catch(error: any){
 				res.send(error);

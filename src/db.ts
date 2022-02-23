@@ -1,4 +1,3 @@
-import RSSParser from "rss-parser";
 const { Pool } = require("pg");
 
 const fs = require("fs");
@@ -22,28 +21,6 @@ const client = new Pool({
 // TODO: error: duplicate key value violates unique constraint "releases_pkey"
 const tableName = "releases"
 
-export function getRssFeed(feedUrl) {
-    let parser = new RSSParser();
-    return new Promise((resolve, reject) => {
-        parser.parseURL(
-            feedUrl,
-            function(err, feed) {
-                if (err) reject(err);
-                resolve(feed);
-            }
-        )
-    });
-};
-
-export async function getOpNodeVersion(feedUrl) {
-    try{
-        return `0.0.1 ${feedUrl}`;
-    }catch(error){
-        console.log(error);
-        return;
-    }
-};
-
 /********************************** 数据库操作 ************************************/
 /**
  * 数据库表结构：
@@ -55,7 +32,7 @@ export async function getOpNodeVersion(feedUrl) {
  * op_url: String 运维节点url
  * op_node_version: String 运维节点版本
  */
-export async function init(){
+ export async function init(){
     await client.connect();
     await client.query(
         `CREATE TABLE IF NOT EXISTS ${tableName} (
