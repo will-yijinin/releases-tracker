@@ -2,7 +2,7 @@ module.exports = {
   // pm2 设置lifecycle management和自动重启。
   apps : [{
     name: "release",
-    script: './src/index.ts',
+    script: './build/index.js',
     watch: true,
     env: {
       NODE_ENV: "development",
