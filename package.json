@@ -7,7 +7,7 @@
     "start": "pm2-runtime start ecosystem.config.js --env production",
     "ls": "pm2 ls",
     "stop": "pm2 delete release",
-    "test": "export NODE_TLS_REJECT_UNAUTHORIZED='0' && ts-node -r dotenv/config ./src/index.ts",
+    "test": "export NODE_TLS_REJECT_UNAUTHORIZED='0' && export NODE_ENV='development' && ts-node -r dotenv/config ./src/index.ts",
     "i": "rm -rf node_modules && npm i",
     "tsc": "npm run clean && tsc",
     "clean": "rm -rf build",

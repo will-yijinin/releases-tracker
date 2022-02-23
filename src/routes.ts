@@ -8,7 +8,15 @@ export async function main() {
 	// console.log(subscriptions);
 
 	for (let i = 0; i < subscriptions.length; i++) {
-		const { feed_url, lark_url, newest_feed } = subscriptions[i];
+		const { feed_url, lark_url, newest_feed, op_url, op_node_version } = subscriptions[i];
+
+		// 更新运维节点版本
+		if(op_url){
+			const fetchedOpNodeVersion = await rss.getOpNodeVersion(op_url);
+			if(fetchedOpNodeVersion !== op_node_version){
+				await rss.updateOpNodeVersion(feed_url, fetchedOpNodeVersion);
+			}
+		}
 
 		// 根据列表，http请求获取最新feeds
 		const fetchedFeeds = await rss.getRssFeed(feed_url);
@@ -24,13 +32,14 @@ export async function main() {
 				const item = fetchedFeeds?.items?.[j];
 				const newestFeedId = JSON.parse(newest_feed)?.id;
 				if(newestFeedId!==item?.id){
+					console.log(newestFeedId)
 					updatedFeeds.push(item);
 				}else{
 					break;
 				}
 			}
 		}
-		// console.log(updatedFeeds)
+		console.log(updatedFeeds)
 
 		// 如果有新的feeds
 		if(updatedFeeds.length>0 && updatedFeeds[0]){
@@ -87,7 +96,7 @@ export async function main() {
 				nodeVersion = nodeVersion.substring(1);
 			}
 
-			await rss.changeNewestFeed(feed_url, updateFeed, nodeVersion);
+			await rss.updateNewestFeed(feed_url, updateFeed, nodeVersion);
 		}
 	}
 };
@@ -132,6 +141,23 @@ export async function deleteFeed(req, res){
 		concat(async data => {
 			let { feedUrls } = JSON.parse(data.toString());
 			res.send({code:200, message:"success", data: feedUrls});
+		})
+	);
+};
+
+export async function updateOpUrl(req, res){
+	req.pipe(
+		concat(async data => {
+			if (data.length === 0) {
+				return res.sendStatus(400);
+			}
+			let { feedUrl, opUrl } = JSON.parse(data.toString());
+			try{
+				await rss.updateOpUrl(feedUrl, opUrl);
+				res.send({code:200, message:"success"});
+			}catch(error: any){
+				res.send(error);
+			}
 		})
 	);
 };

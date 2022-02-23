@@ -1,7 +1,7 @@
 require("dotenv/config");
 const rss = require("./rss");
 const express = require("express");
-const { main, addFeed, deleteFeed } = require("./routes");
+const { main, addFeed, deleteFeed, updateOpUrl } = require("./routes");
 const cron = require('node-cron');
 
 const app = express();
@@ -15,12 +15,17 @@ app.post("/delete/feed", [
 	deleteFeed
 ]);
 
+app.post("/update/opurl", [
+	updateOpUrl
+]);
+
 rss.init().then(() => {
   	console.log("Connected to db");
 
-	// running a task every ten minutes
-	cron.schedule('*/10 * * * *', async () => {
-		// 每隔10分钟循环从数据库中获取列表
+	// running a task every: dev - 1 minute, prod - 10 minutes
+	const timeRange = process.env.NODE_ENV="development" ? "1" : "10";
+	cron.schedule(`*/${timeRange} * * * *`, async () => {
+		// 生产: 每隔10分钟循环从数据库中获取列表
 		await main();
 	});
 

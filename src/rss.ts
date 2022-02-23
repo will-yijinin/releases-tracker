@@ -35,12 +35,25 @@ export function getRssFeed(feedUrl) {
     });
 };
 
+export async function getOpNodeVersion(feedUrl) {
+    try{
+        return `0.0.1 ${feedUrl}`;
+    }catch(error){
+        console.log(error);
+        return;
+    }
+};
+
+/********************************** 数据库操作 ************************************/
 /**
  * 数据库表结构：
- * larkUrl: String
- * feedUrl: String
- * lastFetched: Timestamp
- * newestFeed: Feed
+ * lark_url: String
+ * feed_url: String
+ * last_fetched: Timestamp
+ * newest_feed: Feed
+ * node_version: String github节点版本
+ * op_url: String 运维节点url
+ * op_node_version: String 运维节点版本
  */
 export async function init(){
     await client.connect();
@@ -70,7 +83,7 @@ export async function unSubscribe(feedUrl) {
     return res;
 };
 
-export async function changeNewestFeed(feedUrl, newestFeed, nodeVersion) {
+export async function updateNewestFeed(feedUrl, newestFeed, nodeVersion) {
     let res = await client.query(
         `UPDATE ${tableName} SET newest_feed = $2, node_version = $3
         WHERE feed_url=$1`,
@@ -93,7 +106,7 @@ export async function getNewestFeed(feedUrl) {
 
 export async function listSubscriptions() {
     let res = await client.query(
-        `SELECT feed_url, lark_url, last_fetched, newest_feed from ${tableName}`,
+        `SELECT * from ${tableName}`,
     );
     return res.rows;
 };
@@ -108,6 +121,24 @@ export async function deleteTable(tableName) {
 export async function addColumn(columnName, dataType) {
     let res = await client.query(
         `ALTER TABLE ${tableName} ADD COLUMN ${columnName} ${dataType}`,
+    );
+    return res;
+};
+
+export async function updateOpUrl(feedUrl, opUrl) {
+    let res = await client.query(
+        `UPDATE ${tableName} SET op_url = $2
+        WHERE feed_url=$1`,
+        [feedUrl, opUrl]
+    );
+    return res;
+};
+
+export async function updateOpNodeVersion(feedUrl, opNodeVersion) {
+    let res = await client.query(
+        `UPDATE ${tableName} SET op_node_version = $2
+        WHERE feed_url=$1`,
+        [feedUrl, opNodeVersion]
     );
     return res;
 };
