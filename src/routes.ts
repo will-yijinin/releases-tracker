@@ -32,14 +32,14 @@ export async function main() {
 				const item = fetchedFeeds?.items?.[j];
 				const newestFeedId = JSON.parse(newest_feed)?.id;
 				if(newestFeedId!==item?.id){
-					console.log(newestFeedId)
+					// console.log("newestFeedId: "+newestFeedId)
 					updatedFeeds.push(item);
 				}else{
 					break;
 				}
 			}
 		}
-		console.log(updatedFeeds)
+		// console.log("updatedFeeds: "+JSON.stringify(updatedFeeds))
 
 		// 如果有新的feeds
 		if(updatedFeeds.length>0 && updatedFeeds[0]){
