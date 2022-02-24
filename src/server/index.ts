@@ -1,7 +1,7 @@
 require("dotenv/config");
 const db = require("./db");
 const express = require("express");
-const { main, addFeed, deleteFeed, updateOpUrl } = require("./routes");
+const { main, addFeed, deleteFeed, updateOpNodeVersion } = require("./routes");
 const cron = require('node-cron');
 
 // TODO: ts语法，interface，变量类型
@@ -21,8 +21,8 @@ app.post("/delete/feed", [
 	deleteFeed
 ]);
 
-app.post("/update/opurl", [
-	updateOpUrl
+app.post("/update/nodeversion", [
+	updateOpNodeVersion
 ]);
 
 db.init().then(() => {

@@ -1,27 +1,30 @@
-const { Pool } = require("pg");
+const sqlite3 = require('sqlite3').verbose();
+const db = new sqlite3.Database('releases');
 
-const fs = require("fs");
-const path = `${__dirname}/mock-data.js`;
-let localData: any = {};
-if (fs.existsSync(path)) {
-    // path exists
-    localData = require(path);
-}
-const { DATABASE_URL } = localData;
+const tableName = "releases";
 
-// 使用Pool解决reconnect问题
-const client = new Pool({
-    connectionString: process.env.DATABASE_URL || DATABASE_URL,
-    ssl: true,
-    // Timeout: 60 seconds
-    connectionTimeoutMillis: 60000,
-    max : 5
-});
+async function db_run(query, params?){
+    return new Promise(function(resolve,reject){
+        db.run(query, params || [], function(err){
+            if(err){
+                return reject(err);
+            }
+            resolve(null);
+        });
+    });
+};
 
-// TODO: error: duplicate key value violates unique constraint "releases_pkey"
-const tableName = "releases"
+async function db_all(query, params?){
+    return new Promise(function(resolve,reject){
+        db.all(query, params || [], function(err, res){
+            if(err){
+                return reject(err);
+            }
+            resolve(res);
+        });
+    });
+};
 
-/********************************** 数据库操作 ************************************/
 /**
  * 数据库表结构：
  * feed_url: String
@@ -31,89 +34,68 @@ const tableName = "releases"
  * op_node_version: String 运维节点版本
  */
  export async function init(){
-    await client.connect();
-    await client.query(
+    // db.serialize(function() {});
+    // db.run does not return any result
+    await db_run(
         `CREATE TABLE IF NOT EXISTS ${tableName} (
-            feed_url varchar PRIMARY KEY,
-            lark_url varchar,
-            last_fetched varchar,
-            newest_feed varchar
+            feed_url TEXT PRIMARY KEY,
+            lark_url TEXT,
+            newest_feed TEXT,
+            node_version TEXT,
+            op_node_version TEXT
         )`
     );
 }
 
+export async function listSubscriptions() {
+    const rows = await db_all(
+        `SELECT * FROM ${tableName}`
+    );
+    return rows;
+};
+
 export async function subscribe(feedUrl, larkUrl) {
-    let res = await client.query(
-        `INSERT INTO ${tableName}(feed_url,lark_url) VALUES ($1, $2)`,
-        [feedUrl, larkUrl]
+    const res = await db_run(
+        `INSERT INTO ${tableName}(feed_url,lark_url) VALUES (${feedUrl} ${larkUrl})`
     );
     return res;
 };
 
 export async function unSubscribe(feedUrl) {
-    let res = await client.query(
-        `DELETE FROM ${tableName} WHERE feed_url=$1`,
-        [feedUrl]
+    const res = await db_run(
+        `DELETE FROM ${tableName} WHERE feed_url=${feedUrl}`
     );
     return res;
 };
 
 export async function updateNewestFeed(feedUrl, newestFeed, nodeVersion) {
-    let res = await client.query(
-        `UPDATE ${tableName} SET newest_feed = $2, node_version = $3
-        WHERE feed_url=$1`,
-        [feedUrl, newestFeed, nodeVersion]
+    console.log(feedUrl, newestFeed, nodeVersion)
+    const res = await db_run(
+        `UPDATE ${tableName} SET newest_feed = ${newestFeed}, node_version = ${nodeVersion}
+        WHERE feed_url=${feedUrl}`,
     );
     return res;
 };
 
-export async function getNewestFeed(feedUrl) {
-    let res = await client.query(
-        `SELECT newest_feed from ${tableName}
-        WHERE feed_url=$1`,
-        [feedUrl]
+// TODO
+export async function updateOpNodeVersion(feedUrl, opNodeVersion) {
+    const res = await db_run(
+        `UPDATE ${tableName} SET op_node_version = ${opNodeVersion}
+        WHERE feed_url=${feedUrl}`
     );
-    if (res.rows.length === 0) {
-        return null
-    }
-    return res.rows[0].newest_feed;
-};
-
-export async function listSubscriptions() {
-    let res = await client.query(
-        `SELECT * from ${tableName}`,
-    );
-    return res.rows;
+    return res;
 };
 
 export async function deleteTable(tableName) {
-    let res = await client.query(
-        `DROP TABLE IF EXISTS ${tableName}`,
+    const res = await db_run(
+        `DROP TABLE IF EXISTS ${tableName}`
     );
     return res;
 };
 
 export async function addColumn(columnName, dataType) {
-    let res = await client.query(
-        `ALTER TABLE ${tableName} ADD COLUMN ${columnName} ${dataType}`,
-    );
-    return res;
-};
-
-export async function updateOpUrl(feedUrl, opUrl) {
-    let res = await client.query(
-        `UPDATE ${tableName} SET op_url = $2
-        WHERE feed_url=$1`,
-        [feedUrl, opUrl]
-    );
-    return res;
-};
-
-export async function updateOpNodeVersion(feedUrl, opNodeVersion) {
-    let res = await client.query(
-        `UPDATE ${tableName} SET op_node_version = $2
-        WHERE feed_url=$1`,
-        [feedUrl, opNodeVersion]
+    const res = await db_run(
+        `ALTER TABLE ${tableName} ADD COLUMN ${columnName} ${dataType}`
     );
     return res;
 };

@@ -6,18 +6,10 @@ const concat = require("concat-stream");
 export async function main() {
 
 	const subscriptions = await db.listSubscriptions();
-	// console.log(subscriptions);
+	console.log(subscriptions);
 
 	for (let i = 0; i < subscriptions.length; i++) {
-		const { feed_url, lark_url, newest_feed, op_url, op_node_version } = subscriptions[i];
-
-		// 更新运维节点版本
-		if(op_url){
-			const fetchedOpNodeVersion = await api.getOpNodeVersion(op_url);
-			if(fetchedOpNodeVersion !== op_node_version){
-				await db.updateOpNodeVersion(feed_url, fetchedOpNodeVersion);
-			}
-		}
+		const { feed_url, lark_url, newest_feed } = subscriptions[i];
 
 		// 根据列表，http请求获取最新feeds
 		const fetchedFeeds = await api.getRssFeed(feed_url);
@@ -146,7 +138,14 @@ export async function deleteFeed(req, res){
 	);
 };
 
-export async function updateOpUrl(req, res){
+// TODO: 更新运维节点版本
+// if(op_url){
+// 	const fetchedOpNodeVersion = await api.getOpNodeVersion(op_url);
+// 	if(fetchedOpNodeVersion !== op_node_version){
+// 		await db.updateOpNodeVersion(feed_url, fetchedOpNodeVersion);
+// 	}
+// }
+export async function updateOpNodeVersion(req, res){
 	req.pipe(
 		concat(async data => {
 			if (data.length === 0) {

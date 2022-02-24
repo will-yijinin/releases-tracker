@@ -6,8 +6,8 @@
   "scripts": {
     "start": "pm2-runtime start ecosystem.config.js --env production",
     "ls": "pm2 ls",
-    "stop": "pm2 delete release",
-    "test": "export NODE_TLS_REJECT_UNAUTHORIZED='0' && export NODE_ENV='development' && ts-node -r dotenv/config ./src/index.ts",
+    "stop": "pm2 delete releases",
+    "test": "export NODE_ENV='development' && ts-node -r dotenv/config ./src/server/index.ts",
     "i": "rm -rf node_modules && npm i",
     "pub": "npm run tsc && npm publish",
     "build": "rm -rf build && tsc"
@@ -23,6 +23,7 @@
     "pg": "^8.7.3",
     "pm2": "^5.2.0",
     "rss-parser": "^3.12.0",
+    "sqlite3": "^5.0.2",
     "ts-node": "^10.4.0",
     "typescript": "^4.5.5"
   },
