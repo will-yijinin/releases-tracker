@@ -1,7 +1,7 @@
 require("dotenv/config");
 const db = require("./db");
 const express = require("express");
-const { main, addFeed, deleteFeed, updateOpNodeVersion } = require("./routes");
+const { main, addFeed, deleteFeed, updateOpNodeVersion } = require("./controllers");
 const cron = require('node-cron');
 
 // TODO: ts语法，interface，变量类型
