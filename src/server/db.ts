@@ -14,7 +14,7 @@ async function db_run(query, params?){
     });
 };
 
-async function db_all(query, params?){
+async function db_select(query, params?){
     return new Promise(function(resolve,reject){
         db.all(query, params || [], function(err, res){
             if(err){
@@ -48,7 +48,7 @@ async function db_all(query, params?){
 }
 
 export async function listSubscriptions() {
-    const rows = await db_all(
+    const rows = await db_select(
         `SELECT * FROM ${tableName}`
     );
     return rows;
@@ -71,7 +71,6 @@ export async function unSubscribe(feedUrl) {
 };
 
 export async function updateNewestFeed(feedUrl, newestFeed, nodeVersion) {
-    console.log(feedUrl, newestFeed, nodeVersion)
     const res = await db_run(
         `UPDATE ${tableName} SET newest_feed = ?, node_version = ?
         WHERE feed_url=?`,
