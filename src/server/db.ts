@@ -3,6 +3,16 @@ const db = new sqlite3.Database('releases');
 
 const tableName = "releases";
 
+/**
+ * 数据库表结构：
+ * feed_url: TEXT
+ * feed_url_type: TEXT, "NODE", "JS"
+ * lark_url: TEXT
+ * current_feed: TEXT
+ * github_node_version: TEXT, github节点版本
+ * op_node_version: TEXT, 运维节点版本
+ */
+
 async function db_run(query, params?){
     return new Promise(function(resolve,reject){
         db.run(query, params || [], function(err){
@@ -25,20 +35,13 @@ async function db_select(query, params?){
     });
 };
 
-/**
- * 数据库表结构：
- * feed_url: String
- * lark_url: String
- * current_feed: String
- * github_node_version: String github节点版本
- * op_node_version: String 运维节点版本
- */
- export async function init(){
+export async function init(){
     // db.serialize(function() {});
     // db.run does not return any result
     await db_run(
         `CREATE TABLE IF NOT EXISTS ${tableName} (
             feed_url TEXT PRIMARY KEY,
+            feed_url_type TEXT,
             lark_url TEXT,
             current_feed TEXT,
             github_node_version TEXT,
@@ -54,10 +57,11 @@ export async function listSubscriptions() {
     return rows;
 };
 
-export async function subscribe(feedUrl, larkUrl) {
+export async function subscribe(feedUrl, feedUrlType, larkUrl) {
+    if(!feedUrl || !feedUrlType || !larkUrl) throw Error("缺少入参");
     const res = await db_run(
-        `INSERT INTO ${tableName}(feed_url,lark_url) VALUES (?, ?)`,
-        [feedUrl, larkUrl]
+        `INSERT INTO ${tableName}(feed_url, feed_url_type, lark_url) VALUES (?, ?, ?)`,
+        [feedUrl, feedUrlType, larkUrl]
     );
     return res;
 };

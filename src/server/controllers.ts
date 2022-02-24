@@ -107,10 +107,11 @@ export async function addFeed(req, res){
 			let { larkUrl, feedUrls } = JSON.parse(data.toString());
 			try{
 				for(let i=0; i<feedUrls.length; i++){
-					const feedUrl = feedUrls[i];
+					const {feedUrl, feedUrlType} = feedUrls[i];
 					// 若是非法地址，无法获取feed，抛错404
 					await api.getRssFeed(feedUrl);
-					await db.subscribe(feedUrl, larkUrl);
+					// feedUrlType 默认为 NODE
+					await db.subscribe(feedUrl, feedUrlType || "NODE", larkUrl);
 				}
 				res.send({code:200, message:"success"});
 			}catch(error: any){
