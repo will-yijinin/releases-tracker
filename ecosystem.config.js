@@ -6,11 +6,9 @@ module.exports = {
     watch: true,
     env: {
       NODE_ENV: "development",
-      NODE_TLS_REJECT_UNAUTHORIZED: '0'
     },
     env_production: {
       NODE_ENV: "production",
-      NODE_TLS_REJECT_UNAUTHORIZED: '0'
     },
     // log_date_format: "YYYY-MM-DD HH:mm Z",
     // out_file: "./logs/output.log",

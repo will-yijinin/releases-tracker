@@ -8,7 +8,6 @@ const cron = require('node-cron');
 // TODO: ui: material ui
 // TODO: next.js
 // TODO: auth中间件
-// TODO: levelDB
 // TODO: 竞品的公告网站
 const app = express();
 const port = process.env.PORT || 8000;

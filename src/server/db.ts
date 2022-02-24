@@ -79,7 +79,7 @@ export async function updateNewestFeed(feedUrl, newestFeed, nodeVersion) {
     return res;
 };
 
-// TODO
+// TODO: 更新运维节点版本
 export async function updateOpNodeVersion(feedUrl, opNodeVersion) {
     const res = await db_run(
         `UPDATE ${tableName} SET op_node_version = ?

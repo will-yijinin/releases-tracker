@@ -3,6 +3,17 @@ const db = require("./db");
 const api = require("./api");
 const concat = require("concat-stream");
 
+// 更新当前feed_url最新的newest_feed
+async function updateNewestFeed(feed_url, updateFeed){
+	const array = updateFeed?.link?.split("/");
+	let nodeVersion = array?.[array?.length-1];
+	if(nodeVersion.substring(0,1).toLowerCase()==="v"){
+		nodeVersion = nodeVersion.substring(1);
+	}
+
+	await db.updateNewestFeed(feed_url, updateFeed, nodeVersion);
+}
+
 export async function main() {
 
 	const subscriptions = await db.listSubscriptions();
@@ -15,81 +26,74 @@ export async function main() {
 		const fetchedFeeds = await api.getRssFeed(feed_url);
 		// console.log(fetchedFeeds);
 
-		const updatedFeeds: any[] = [];
-		// 如果数据库中的newest_feed字段不存在，说明是新的subscription，只推送最近一条更新即可
+		// 如果数据库中的newest_feed字段不存在，说明是新的subscription，只更新newest_feed即可
 		if(!newest_feed){
-			updatedFeeds.push(fetchedFeeds?.items?.[0]);
+			await updateNewestFeed(feed_url, fetchedFeeds?.items?.[0]);
 		}else{
+			const updatedFeeds: any[] = [];
+
 			// 将获取的数据与数据库中的newest_feed进行比较，记录不同的feeds
 			for(let j=0; j<fetchedFeeds?.items?.length; j++){
 				const item = fetchedFeeds?.items?.[j];
 				const newestFeedId = JSON.parse(newest_feed)?.id;
 				if(newestFeedId!==item?.id){
-					console.log("newestFeedId: "+newestFeedId)
+					console.log("newestFeedId: "+newestFeedId);
 					updatedFeeds.push(item);
 				}else{
 					break;
 				}
 			}
-		}
-		// console.log(updatedFeeds)
+			// console.log(updatedFeeds);
 
-		// 如果有新的feeds
-		if(updatedFeeds.length>0 && updatedFeeds[0]){
-			// 发送新的数据到相应的lark channel
-			for(let k=updatedFeeds.length-1; k>=0; k--){
-				const response = await axios.post(
-					lark_url,
-					{
-						"msg_type": "post",
-						"content": {
-							"post": {
-								"zh_cn": {
-									"title": fetchedFeeds.title,
-									"content": [
-										[
-											{
-												"tag": "a",
-												"text": updatedFeeds[k].title,
-												"href": updatedFeeds[k].link,
-											},
-										],
-										[
-											{
-												"tag": "text",
-												"text": new Date(updatedFeeds[k].pubDate).toLocaleString(),
-											},
-										],
-										[
-											{
-												"tag": "text",
-												"text": "",
-											},
-										],
-										[
-											{
-												"tag": "text",
-												"text": updatedFeeds[k].contentSnippet
-											}
+			// 如果有新的feeds
+			if(updatedFeeds.length>0 && updatedFeeds[0]){
+				// 发送新的数据到相应的lark channel
+				for(let k=updatedFeeds.length-1; k>=0; k--){
+					const response = await axios.post(
+						lark_url,
+						{
+							"msg_type": "post",
+							"content": {
+								"post": {
+									"zh_cn": {
+										"title": fetchedFeeds.title,
+										"content": [
+											[
+												{
+													"tag": "a",
+													"text": updatedFeeds[k].title,
+													"href": updatedFeeds[k].link,
+												},
+											],
+											[
+												{
+													"tag": "text",
+													"text": new Date(updatedFeeds[k].pubDate).toLocaleString(),
+												},
+											],
+											[
+												{
+													"tag": "text",
+													"text": "",
+												},
+											],
+											[
+												{
+													"tag": "text",
+													"text": updatedFeeds[k].contentSnippet
+												}
+											]
 										]
-									]
+									}
 								}
 							}
 						}
-					}
-				);
-				console.log(response.data)
-			}
+					);
+					console.log(response.data)
+				}
 
-			// 更新当前feed_url最新的newest_feed
-			const updateFeed = updatedFeeds[0];
-			const array = updateFeed?.link?.split("/");
-			let nodeVersion = array?.[array?.length-1];
-			if(nodeVersion.substring(0,1).toLowerCase()==="v"){
-				nodeVersion = nodeVersion.substring(1);
+				await updateNewestFeed(feed_url, updatedFeeds[0]);
 			}
-
-			await db.updateNewestFeed(feed_url, updateFeed, nodeVersion);
 		}
 	}
 };
