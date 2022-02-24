@@ -3,15 +3,15 @@ const db = require("./db");
 const api = require("./api");
 const concat = require("concat-stream");
 
-// 更新当前feed_url最新的newest_feed
-async function updateNewestFeed(feed_url, updateFeed){
+// 更新当前feed_url最新的current_feed
+async function updateCurrentFeed(feed_url, updateFeed){
 	const array = updateFeed?.link?.split("/");
-	let nodeVersion = array?.[array?.length-1];
-	if(nodeVersion.substring(0,1).toLowerCase()==="v"){
-		nodeVersion = nodeVersion.substring(1);
+	let githubNodeVersion = array?.[array?.length-1];
+	if(githubNodeVersion.substring(0,1).toLowerCase()==="v"){
+		githubNodeVersion = githubNodeVersion.substring(1);
 	}
 
-	await db.updateNewestFeed(feed_url, updateFeed, nodeVersion);
+	await db.updateCurrentFeed(feed_url, updateFeed, githubNodeVersion);
 }
 
 export async function main() {
@@ -20,24 +20,24 @@ export async function main() {
 	console.log(subscriptions);
 
 	for (let i = 0; i < subscriptions.length; i++) {
-		const { feed_url, lark_url, newest_feed } = subscriptions[i];
+		const { feed_url, lark_url, current_feed } = subscriptions[i];
 
 		// 根据列表，http请求获取最新feeds
 		const fetchedFeeds = await api.getRssFeed(feed_url);
 		// console.log(fetchedFeeds);
 
-		// 如果数据库中的newest_feed字段不存在，说明是新的subscription，只更新newest_feed即可
-		if(!newest_feed){
-			await updateNewestFeed(feed_url, fetchedFeeds?.items?.[0]);
+		// 如果数据库中的current_feed字段不存在，说明是新的subscription，只更新current_feed即可
+		if(!current_feed){
+			await updateCurrentFeed(feed_url, fetchedFeeds?.items?.[0]);
 		}else{
 			const updatedFeeds: any[] = [];
 
-			// 将获取的数据与数据库中的newest_feed进行比较，记录不同的feeds
+			// 将获取的数据与数据库中的current_feed进行比较，记录不同的feeds
 			for(let j=0; j<fetchedFeeds?.items?.length; j++){
 				const item = fetchedFeeds?.items?.[j];
-				const newestFeedId = JSON.parse(newest_feed)?.id;
-				if(newestFeedId!==item?.id){
-					console.log("newestFeedId: "+newestFeedId);
+				const currentFeedId = JSON.parse(current_feed)?.id;
+				if(currentFeedId!==item?.id){
+					console.log("currentFeedId: "+currentFeedId);
 					updatedFeeds.push(item);
 				}else{
 					break;
@@ -92,7 +92,7 @@ export async function main() {
 					console.log(response.data)
 				}
 
-				await updateNewestFeed(feed_url, updatedFeeds[0]);
+				await updateCurrentFeed(feed_url, updatedFeeds[0]);
 			}
 		}
 	}

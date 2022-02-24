@@ -29,8 +29,8 @@ async function db_select(query, params?){
  * 数据库表结构：
  * feed_url: String
  * lark_url: String
- * newest_feed: Feed
- * node_version: String github节点版本
+ * current_feed: String
+ * github_node_version: String github节点版本
  * op_node_version: String 运维节点版本
  */
  export async function init(){
@@ -40,8 +40,8 @@ async function db_select(query, params?){
         `CREATE TABLE IF NOT EXISTS ${tableName} (
             feed_url TEXT PRIMARY KEY,
             lark_url TEXT,
-            newest_feed TEXT,
-            node_version TEXT,
+            current_feed TEXT,
+            github_node_version TEXT,
             op_node_version TEXT
         )`
     );
@@ -70,11 +70,11 @@ export async function unSubscribe(feedUrl) {
     return res;
 };
 
-export async function updateNewestFeed(feedUrl, newestFeed, nodeVersion) {
+export async function updateCurrentFeed(feedUrl, updateFeed, githubNodeVersion) {
     const res = await db_run(
-        `UPDATE ${tableName} SET newest_feed = ?, node_version = ?
+        `UPDATE ${tableName} SET current_feed = ?, github_node_version = ?
         WHERE feed_url=?`,
-        [JSON.stringify(newestFeed), nodeVersion, feedUrl]
+        [JSON.stringify(updateFeed), githubNodeVersion, feedUrl]
     );
     return res;
 };
