@@ -56,14 +56,16 @@ export async function listSubscriptions() {
 
 export async function subscribe(feedUrl, larkUrl) {
     const res = await db_run(
-        `INSERT INTO ${tableName}(feed_url,lark_url) VALUES (${feedUrl} ${larkUrl})`
+        `INSERT INTO ${tableName}(feed_url,lark_url) VALUES (?, ?)`,
+        [feedUrl, larkUrl]
     );
     return res;
 };
 
 export async function unSubscribe(feedUrl) {
     const res = await db_run(
-        `DELETE FROM ${tableName} WHERE feed_url=${feedUrl}`
+        `DELETE FROM ${tableName} WHERE feed_url=?`,
+        [feedUrl]
     );
     return res;
 };
@@ -71,8 +73,9 @@ export async function unSubscribe(feedUrl) {
 export async function updateNewestFeed(feedUrl, newestFeed, nodeVersion) {
     console.log(feedUrl, newestFeed, nodeVersion)
     const res = await db_run(
-        `UPDATE ${tableName} SET newest_feed = ${newestFeed}, node_version = ${nodeVersion}
-        WHERE feed_url=${feedUrl}`,
+        `UPDATE ${tableName} SET newest_feed = ?, node_version = ?
+        WHERE feed_url=?`,
+        [JSON.stringify(newestFeed), nodeVersion, feedUrl]
     );
     return res;
 };
@@ -80,8 +83,9 @@ export async function updateNewestFeed(feedUrl, newestFeed, nodeVersion) {
 // TODO
 export async function updateOpNodeVersion(feedUrl, opNodeVersion) {
     const res = await db_run(
-        `UPDATE ${tableName} SET op_node_version = ${opNodeVersion}
-        WHERE feed_url=${feedUrl}`
+        `UPDATE ${tableName} SET op_node_version = ?
+        WHERE feed_url=?`,
+        [opNodeVersion, feedUrl]
     );
     return res;
 };
