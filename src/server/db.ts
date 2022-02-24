@@ -24,12 +24,10 @@ const tableName = "releases"
 /********************************** 数据库操作 ************************************/
 /**
  * 数据库表结构：
- * lark_url: String
  * feed_url: String
- * last_fetched: Timestamp
+ * lark_url: String
  * newest_feed: Feed
  * node_version: String github节点版本
- * op_url: String 运维节点url
  * op_node_version: String 运维节点版本
  */
  export async function init(){
