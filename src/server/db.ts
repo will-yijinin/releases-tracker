@@ -13,9 +13,9 @@ const tableName = "releases";
  * op_node_version: TEXT, 运维节点版本
  */
 
-async function db_run(query, params?){
+async function db_run(query: string, params?: string[]){
     return new Promise(function(resolve,reject){
-        db.run(query, params || [], function(err){
+        db.run(query, params || [], function(err: Error){
             if(err){
                 return reject(err);
             }
@@ -24,9 +24,9 @@ async function db_run(query, params?){
     });
 };
 
-async function db_select(query, params?){
+async function db_select(query: string, params?: string[]){
     return new Promise(function(resolve,reject){
-        db.all(query, params || [], function(err, res){
+        db.all(query, params || [], function(err: Error, res: any){
             if(err){
                 return reject(err);
             }
@@ -57,7 +57,7 @@ export async function listSubscriptions() {
     return rows;
 };
 
-export async function subscribe(feedUrl, feedUrlType, larkUrl) {
+export async function subscribe(feedUrl: string, feedUrlType: string, larkUrl: string) {
     if(!feedUrl || !feedUrlType || !larkUrl) throw Error("缺少入参");
     const res = await db_run(
         `INSERT INTO ${tableName}(feed_url, feed_url_type, lark_url) VALUES (?, ?, ?)`,
@@ -66,7 +66,7 @@ export async function subscribe(feedUrl, feedUrlType, larkUrl) {
     return res;
 };
 
-export async function unSubscribe(feedUrl) {
+export async function unSubscribe(feedUrl: string) {
     const res = await db_run(
         `DELETE FROM ${tableName} WHERE feed_url=?`,
         [feedUrl]
@@ -74,7 +74,7 @@ export async function unSubscribe(feedUrl) {
     return res;
 };
 
-export async function updateCurrentFeed(feedUrl, updateFeed, githubNodeVersion) {
+export async function updateCurrentFeed(feedUrl: string, updateFeed: any, githubNodeVersion: string) {
     const res = await db_run(
         `UPDATE ${tableName} SET current_feed = ?, github_node_version = ?
         WHERE feed_url=?`,
@@ -84,7 +84,7 @@ export async function updateCurrentFeed(feedUrl, updateFeed, githubNodeVersion) 
 };
 
 // TODO: 更新运维节点版本
-export async function updateOpNodeVersion(feedUrl, opNodeVersion) {
+export async function updateOpNodeVersion(feedUrl: string, opNodeVersion: string) {
     const res = await db_run(
         `UPDATE ${tableName} SET op_node_version = ?
         WHERE feed_url=?`,
@@ -93,14 +93,14 @@ export async function updateOpNodeVersion(feedUrl, opNodeVersion) {
     return res;
 };
 
-export async function deleteTable(tableName) {
+export async function deleteTable(tableName: string) {
     const res = await db_run(
         `DROP TABLE IF EXISTS ${tableName}`
     );
     return res;
 };
 
-export async function addColumn(columnName, dataType) {
+export async function addColumn(columnName: string, dataType: string) {
     const res = await db_run(
         `ALTER TABLE ${tableName} ADD COLUMN ${columnName} ${dataType}`
     );

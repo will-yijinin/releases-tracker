@@ -40,7 +40,7 @@ db.init().then(() => {
 		console.log("Started Server...");
 		console.log(`Listening on http://127.0.0.1:${port}`);
 	});
-}).catch((e) => {
+}).catch((e: Error) => {
 	console.log(e);
 });
 

@@ -4,7 +4,7 @@ const api = require("./api");
 const concat = require("concat-stream");
 
 // 更新当前feed_url最新的current_feed
-async function updateCurrentFeed(feed_url, updateFeed){
+async function updateCurrentFeed(feed_url: string, updateFeed: any){
 	const array = updateFeed?.link?.split("/");
 	let githubNodeVersion = array?.[array?.length-1];
 	if(githubNodeVersion.substring(0,1).toLowerCase()==="v"){
@@ -28,6 +28,7 @@ export async function main() {
 
 		// 如果数据库中的current_feed字段不存在，说明是新的subscription，只更新current_feed即可
 		if(!current_feed){
+			// TODO: serialize otherwise when mass, some items missing. maybe batch send
 			await updateCurrentFeed(feed_url, fetchedFeeds?.items?.[0]);
 		}else{
 			const updatedFeeds: any[] = [];
@@ -98,7 +99,7 @@ export async function main() {
 	}
 };
 
-export async function addFeed(req, res){
+export async function addFeed(req: any, res: any){
 	req.pipe(
 		concat(async data => {
 			if (data.length === 0) {
@@ -116,7 +117,7 @@ export async function addFeed(req, res){
 				res.send({code:200, message:"success"});
 			}catch(error: any){
 				let code = error.code;
-				let msg;
+				let msg: string;
 				switch(code){
 					case "23505":
 						msg = error.detail;
@@ -134,7 +135,7 @@ export async function addFeed(req, res){
 	);
 };
 
-export async function deleteFeed(req, res){
+export async function deleteFeed(req: any, res: any){
 	req.pipe(
 		concat(async data => {
 			let { feedUrls } = JSON.parse(data.toString());
@@ -150,7 +151,7 @@ export async function deleteFeed(req, res){
 // 		await db.updateOpNodeVersion(feed_url, fetchedOpNodeVersion);
 // 	}
 // }
-export async function updateOpNodeVersion(req, res){
+export async function updateOpNodeVersion(req: any, res: any){
 	req.pipe(
 		concat(async data => {
 			if (data.length === 0) {
