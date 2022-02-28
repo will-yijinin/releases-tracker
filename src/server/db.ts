@@ -6,11 +6,11 @@ const tableName = "releases";
 /**
  * 数据库表结构：
  * feed_url: TEXT
- * feed_url_type: TEXT, "NODE", "JS"
  * lark_url: TEXT
  * current_feed: TEXT
  * github_node_version: TEXT, github节点版本
  * op_node_version: TEXT, 运维节点版本
+ * node_name: TEXT
  */
 
 async function db_run(query: string, params?: string[]){
@@ -41,11 +41,11 @@ export async function init(){
     await db_run(
         `CREATE TABLE IF NOT EXISTS ${tableName} (
             feed_url TEXT PRIMARY KEY,
-            feed_url_type TEXT,
             lark_url TEXT,
             current_feed TEXT,
             github_node_version TEXT,
-            op_node_version TEXT
+            op_node_version TEXT,
+            node_name TEXT
         )`
     );
 }
@@ -57,11 +57,11 @@ export async function listSubscriptions() {
     return rows;
 };
 
-export async function subscribe(feedUrl: string, feedUrlType: string, larkUrl: string) {
-    if(!feedUrl || !feedUrlType || !larkUrl) throw Error("缺少入参");
+export async function subscribe(feedUrl: string, larkUrl: string, nodeName: string) {
+    if(!feedUrl || !larkUrl) throw Error("缺少入参");
     const res = await db_run(
-        `INSERT INTO ${tableName}(feed_url, feed_url_type, lark_url) VALUES (?, ?, ?)`,
-        [feedUrl, feedUrlType, larkUrl]
+        `INSERT INTO ${tableName}(feed_url, lark_url, node_name) VALUES (?, ?, ?)`,
+        [feedUrl, larkUrl, nodeName]
     );
     return res;
 };
@@ -84,13 +84,18 @@ export async function updateCurrentFeed(feedUrl: string, updateFeed: any, github
 };
 
 // TODO: 更新运维节点版本
-export async function updateOpNodeVersion(feedUrl: string, opNodeVersion: string) {
-    const res = await db_run(
+export async function updateOpNodeVersion(array: any[]) {
+    var statement = db.prepare(
         `UPDATE ${tableName} SET op_node_version = ?
-        WHERE feed_url=?`,
-        [opNodeVersion, feedUrl]
+        WHERE node_name=?`
     );
-    return res;
+
+    for (var i = 0; i < array.length; i++) {
+        const item = array[i];
+        statement.run(item.nodeVersion, item.nodeName);
+    }
+
+    return;
 };
 
 export async function deleteTable(tableName: string) {

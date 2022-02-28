@@ -108,11 +108,10 @@ export async function addFeed(req: any, res: any){
 			let { larkUrl, feedUrls } = JSON.parse(data.toString());
 			try{
 				for(let i=0; i<feedUrls.length; i++){
-					const {feedUrl, feedUrlType} = feedUrls[i];
+					const {feedUrl, nodeName} = feedUrls[i];
 					// 若是非法地址，无法获取feed，抛错404
 					await api.getRssFeed(feedUrl);
-					// feedUrlType 默认为 NODE
-					await db.subscribe(feedUrl, feedUrlType || "NODE", larkUrl);
+					await db.subscribe(feedUrl, larkUrl, nodeName);
 				}
 				res.send({code:200, message:"success"});
 			}catch(error: any){
@@ -144,22 +143,15 @@ export async function deleteFeed(req: any, res: any){
 	);
 };
 
-// TODO: 更新运维节点版本
-// if(op_url){
-// 	const fetchedOpNodeVersion = await api.getOpNodeVersion(op_url);
-// 	if(fetchedOpNodeVersion !== op_node_version){
-// 		await db.updateOpNodeVersion(feed_url, fetchedOpNodeVersion);
-// 	}
-// }
 export async function updateOpNodeVersion(req: any, res: any){
 	req.pipe(
 		concat(async data => {
 			if (data.length === 0) {
 				return res.sendStatus(400);
 			}
-			let { feedUrl, opUrl } = JSON.parse(data.toString());
+			let resp = JSON.parse(data.toString());
 			try{
-				await db.updateOpUrl(feedUrl, opUrl);
+				await db.updateOpNodeVersion(resp);
 				res.send({code:200, message:"success"});
 			}catch(error: any){
 				res.send(error);

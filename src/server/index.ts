@@ -4,7 +4,6 @@ const express = require("express");
 const { main, addFeed, deleteFeed, updateOpNodeVersion } = require("./controllers");
 const cron = require('node-cron');
 
-// TODO: ts语法，interface，变量类型
 // TODO: ui: material ui
 // TODO: next.js
 // TODO: auth中间件
