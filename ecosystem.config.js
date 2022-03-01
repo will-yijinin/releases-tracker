@@ -1,7 +1,7 @@
 module.exports = {
   // pm2 设置lifecycle management和自动重启。
   apps : [{
-    name: "releases",
+    name: "server",
     script: './build/server/index.js',
     watch: true,
     env: {
@@ -14,7 +14,16 @@ module.exports = {
     // out_file: "./logs/output.log",
     // error_file: "./logs/error.log",
     max_memory_restart: "200M",
-    interpreter: "./node_modules/.bin/ts-node"
+  },{
+    name: "cron-job",
+    script: "./build/server/cron-job.js",
+    watch: true,
+    env: {
+      NODE_ENV: "development",
+    },
+    env_production: {
+      NODE_ENV: "production",
+    },
   }]
   // deploy : {
   //   production : {

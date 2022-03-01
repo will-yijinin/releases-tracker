@@ -6,8 +6,9 @@
   "scripts": {
     "start": "pm2-runtime start ecosystem.config.js --env production",
     "ls": "pm2 ls",
-    "stop": "pm2 delete releases",
-    "test": "export NODE_ENV='development' && ts-node -r dotenv/config ./src/server/index.ts",
+    "stop-server": "pm2 delete server",
+    "stop-cron-job": "pm2 delete cron-job",
+    "test": "export NODE_ENV='development' && ts-node -r dotenv/config ./src/server/index.ts && ts-node ./src/server/cron-job.ts",
     "i": "rm -rf node_modules && npm i",
     "pub": "npm run tsc && npm publish",
     "build": "rm -rf build && tsc"

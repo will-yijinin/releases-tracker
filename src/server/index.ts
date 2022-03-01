@@ -1,8 +1,7 @@
 require("dotenv/config");
 const db = require("./db");
 const express = require("express");
-const { main, addFeed, deleteFeed, updateOpNodeVersion } = require("./controllers");
-const cron = require('node-cron');
+const { addFeed, deleteFeed, updateOpNodeVersion } = require("./controllers");
 
 // TODO: ui: material ui
 // TODO: next.js
@@ -24,17 +23,6 @@ app.post("/update/nodeversion", [
 ]);
 
 db.init().then(() => {
-  	console.log("Connected to db");
-
-	// running a task every: dev - 1 minute, prod - 10 minutes
-	const timeRange = process.env.NODE_ENV==="development" ? "1" : "10";
-
-	// TODO: job单独一个app，和server分离
-	cron.schedule(`*/${timeRange} * * * *`, async () => {
-		// 生产: 每隔10分钟循环从数据库中获取列表
-		await main();
-	});
-
 	app.listen(port, () => {
 		console.log("Started Server...");
 		console.log(`Listening on http://127.0.0.1:${port}`);
