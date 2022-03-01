@@ -83,7 +83,6 @@ export async function updateCurrentFeed(feedUrl: string, updateFeed: any, github
     return res;
 };
 
-// TODO: 更新运维节点版本
 export async function updateOpNodeVersion(array: any[]) {
     var statement = db.prepare(
         `UPDATE ${tableName} SET op_node_version = ?

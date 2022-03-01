@@ -1,6 +1,6 @@
 const axios = require("axios");
 const db = require("./db");
-const api = require("./api");
+const request = require("./request");
 const concat = require("concat-stream");
 
 // 更新当前feed_url最新的current_feed
@@ -23,7 +23,7 @@ export async function main() {
 		const { feed_url, lark_url, current_feed } = subscriptions[i];
 
 		// 根据列表，http请求获取最新feeds
-		const fetchedFeeds = await api.getRssFeed(feed_url);
+		const fetchedFeeds = await request.getRssFeed(feed_url);
 		// console.log(fetchedFeeds);
 
 		// 如果数据库中的current_feed字段不存在，说明是新的subscription，只更新current_feed即可
@@ -110,7 +110,7 @@ export async function addFeed(req: any, res: any){
 				for(let i=0; i<feedUrls.length; i++){
 					const {feedUrl, nodeName} = feedUrls[i];
 					// 若是非法地址，无法获取feed，抛错404
-					await api.getRssFeed(feedUrl);
+					await request.getRssFeed(feedUrl);
 					await db.subscribe(feedUrl, larkUrl, nodeName);
 				}
 				res.send({code:200, message:"success"});

@@ -12,13 +12,3 @@ export function getRssFeed(feedUrl: string) {
         )
     });
 };
-
-export async function getOpNodeVersion(feedUrl: string) {
-    try{
-        return `0.0.1 ${feedUrl}`;
-    }catch(error){
-        console.log(error);
-        return;
-    }
-};
-
