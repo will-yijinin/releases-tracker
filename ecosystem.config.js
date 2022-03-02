@@ -3,7 +3,6 @@ module.exports = {
   apps : [{
     name: "server",
     script: './build/server/index.js',
-    watch: true,
     env: {
       NODE_ENV: "development",
     },
@@ -17,7 +16,6 @@ module.exports = {
   },{
     name: "cron-job",
     script: "./build/server/cron-job.js",
-    watch: true,
     env: {
       NODE_ENV: "development",
     },
