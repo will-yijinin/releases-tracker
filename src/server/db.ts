@@ -1,7 +1,7 @@
 const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('local');
+const db = new sqlite3.Database('localdb');
 
-const tableName = "local";
+const tableName = "localdb";
 
 /**
  * 数据库表结构：
