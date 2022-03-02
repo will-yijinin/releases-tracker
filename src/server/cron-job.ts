@@ -25,7 +25,7 @@ async function updateCurrentFeed(feed_url: string, updateFeed: any){
 async function main() {
 
 	const subscriptions: any = await db.listSubscriptions();
-	console.log(subscriptions);
+	console.log(subscriptions.length);
 
 	for (let i = 0; i < subscriptions.length; i++) {
 		const { feed_url, lark_url, current_feed } = subscriptions[i];
