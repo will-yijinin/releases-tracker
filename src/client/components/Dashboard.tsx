@@ -16,8 +16,9 @@ import Paper from '@mui/material/Paper';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { mainListItems } from './listItems.tsx';
-import Orders from './Orders.tsx';
+import { mainListItems } from './listItems';
+import Orders from './Orders';
+import HttpRequestClient from "../utils/request";
 
 function Copyright(props: any) {
   return (
@@ -83,7 +84,27 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 const mdTheme = createTheme();
 
 function DashboardContent() {
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
+  const [nodeList, setNodeList] = React.useState([]);
+
+  const fetchData = async () => {
+    const port = process.env.PORT || 8000;
+
+    const res = await HttpRequestClient.get(
+      `http://127.0.0.1:${port}/list/subscriptions`
+    );
+
+    setNodeList(res.data);
+  };
+
+  React.useEffect(() => {
+    fetchData();
+    var id = setInterval(fetchData, 60000);
+    return () => {
+      clearInterval(id);
+    };
+  }, [JSON.stringify(nodeList)]);
+
   const toggleDrawer = () => {
     setOpen(!open);
   };
@@ -164,7 +185,7 @@ function DashboardContent() {
               {/* Recent Orders */}
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                  <Orders />
+                  <Orders nodeList={nodeList} />
                 </Paper>
               </Grid>
             </Grid>

@@ -5,8 +5,7 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-// @ts-ignore
-import Title from './Title.tsx';
+import Title from './Title';
 
 // Generate Order Data
 function createData(
@@ -60,7 +59,9 @@ function preventDefault(event: React.MouseEvent) {
   event.preventDefault();
 }
 
-export default function Orders() {
+export default function Orders(props) {
+  const { nodeList } = props;
+  console.log(nodeList)
   return (
     <React.Fragment>
       <Title>节点版本</Title>
