@@ -3,6 +3,10 @@ import * as requests from "../services/requests";
 import concat from "concat-stream";
 
 module.exports = app => {
+	app.get("/list/subscriptions", [
+		listSubscriptions
+	]);
+
 	app.post("/add/feed", [
 		addFeed
 	]);
@@ -15,11 +19,20 @@ module.exports = app => {
 		updateOpNodeVersion
 	]);
 
-	app.get("/list/subscriptions", [
-		listSubscriptions
+	app.post("/update/nodefullname", [
+		updateNodeFullName
 	]);
 };
 
+
+async function listSubscriptions(_, res: any){
+	try{
+		const subscriptions = await db.listSubscriptions();
+		res.send(subscriptions);
+	}catch(error: any){
+		res.send(error);
+	}
+};
 
 async function addFeed(req: any, res: any){
 	req.pipe(
@@ -82,11 +95,20 @@ async function updateOpNodeVersion(req: any, res: any){
 	);
 };
 
-async function listSubscriptions(_, res: any){
-	try{
-		const subscriptions = await db.listSubscriptions();
-		res.send(subscriptions);
-	}catch(error: any){
-		res.send(error);
-	}
+async function updateNodeFullName(req: any, res: any){
+	req.pipe(
+		concat(async data => {
+			if (data.length === 0) {
+				return res.sendStatus(400);
+			}
+			let resp = JSON.parse(data.toString());
+			try{
+				await db.updateNodeFullName(resp);
+				res.send({code:200, message:"success"});
+			}catch(error: any){
+				res.send(error);
+			}
+		})
+	);
 };
+

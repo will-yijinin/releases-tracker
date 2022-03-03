@@ -11,6 +11,7 @@ const tableName = "local";
  * github_node_version: TEXT, github节点版本
  * op_node_version: TEXT, 运维节点版本
  * node_name: TEXT
+ * node_full_name: TEXT
  */
 
 async function db_run(query: string, params?: string[]){
@@ -92,6 +93,21 @@ export async function updateOpNodeVersion(array: any[]) {
     for (var i = 0; i < array.length; i++) {
         const item = array[i];
         statement.run(item.nodeVersion, item.nodeName);
+    }
+
+    return;
+};
+
+export async function updateNodeFullName(array: any[]) {
+    console.log(array)
+    var statement = db.prepare(
+        `UPDATE ${tableName} SET node_full_name = ?
+        WHERE node_name=?`
+    );
+
+    for (var i = 0; i < array.length; i++) {
+        const item = array[i];
+        statement.run(item.nodeFullName, item.nodeName);
     }
 
     return;
