@@ -1,8 +1,23 @@
-const db = require("./db");
-const requests = require("./requests");
+const db = require("../services/db");
+const requests = require("../services/requests");
 const concat = require("concat-stream");
 
-export async function addFeed(req: any, res: any){
+module.exports = app => {
+	app.post("/add/feed", [
+		addFeed
+	]);
+	
+	app.post("/delete/feed", [
+		deleteFeed
+	]);
+	
+	app.post("/update/nodeversion", [
+		updateOpNodeVersion
+	]);
+};
+
+
+async function addFeed(req: any, res: any){
 	req.pipe(
 		concat(async data => {
 			if (data.length === 0) {
@@ -37,7 +52,7 @@ export async function addFeed(req: any, res: any){
 	);
 };
 
-export async function deleteFeed(req: any, res: any){
+async function deleteFeed(req: any, res: any){
 	req.pipe(
 		concat(async data => {
 			let { feedUrls } = JSON.parse(data.toString());
@@ -46,7 +61,7 @@ export async function deleteFeed(req: any, res: any){
 	);
 };
 
-export async function updateOpNodeVersion(req: any, res: any){
+async function updateOpNodeVersion(req: any, res: any){
 	req.pipe(
 		concat(async data => {
 			if (data.length === 0) {

@@ -1,7 +1,7 @@
 require("dotenv/config");
-const db = require("./db");
+const db = require("./services/db");
 const express = require("express");
-const { addFeed, deleteFeed, updateOpNodeVersion } = require("./controllers");
+const { addFeed, deleteFeed, updateOpNodeVersion } = require("./routes");
 
 // TODO: ui: material ui
 // TODO: next.js
@@ -10,17 +10,7 @@ const { addFeed, deleteFeed, updateOpNodeVersion } = require("./controllers");
 const app = express();
 const port = process.env.PORT || 8000;
 
-app.post("/add/feed", [
-	addFeed
-]);
-
-app.post("/delete/feed", [
-	deleteFeed
-]);
-
-app.post("/update/nodeversion", [
-	updateOpNodeVersion
-]);
+require("./routes")(app);
 
 db.init().then(() => {
 	app.listen(port, () => {

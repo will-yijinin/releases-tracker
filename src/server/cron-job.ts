@@ -1,6 +1,6 @@
 import axios from "axios";
-import * as db from "./db";
-import * as requests from "./requests";
+import * as db from "./services/db";
+import * as requests from "./services/requests";
 import cron from "node-cron"
 
 // running a task every: dev - 1 minute, prod - 10 minutes
