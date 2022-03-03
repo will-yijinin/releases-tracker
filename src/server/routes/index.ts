@@ -1,6 +1,6 @@
-const db = require("../services/db");
-const requests = require("../services/requests");
-const concat = require("concat-stream");
+import * as db from "../services/db";
+import * as requests from "../services/requests";
+import concat from "concat-stream";
 
 module.exports = app => {
 	app.post("/add/feed", [
@@ -13,6 +13,10 @@ module.exports = app => {
 	
 	app.post("/update/nodeversion", [
 		updateOpNodeVersion
+	]);
+
+	app.get("/list/subscriptions", [
+		listSubscriptions
 	]);
 };
 
@@ -76,4 +80,13 @@ async function updateOpNodeVersion(req: any, res: any){
 			}
 		})
 	);
+};
+
+async function listSubscriptions(_, res: any){
+	try{
+		const subscriptions = await db.listSubscriptions();
+		res.send(subscriptions);
+	}catch(error: any){
+		res.send(error);
+	}
 };
