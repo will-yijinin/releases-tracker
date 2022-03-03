@@ -93,8 +93,11 @@ function DashboardContent() {
     const res = await HttpRequestClient.get(
       `http://127.0.0.1:${port}/list/subscriptions`
     );
-
-    setNodeList(res.data);
+    const array = res?.data?.filter(ele=>ele.node_name);
+    array.sort((a, b) => {
+      return a.node_name.normalize().localeCompare(b.node_name.normalize());
+    });
+    setNodeList(array);
   };
 
   React.useEffect(() => {
