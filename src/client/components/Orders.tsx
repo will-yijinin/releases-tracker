@@ -33,9 +33,8 @@ export default function Orders(props) {
           <TableRow>
             <TableCell>链</TableCell>
             <TableCell>链全称</TableCell>
-            <TableCell>运维</TableCell>
-            <TableCell>github最新</TableCell>
-            {/* <TableCell align="right">Sale Amount</TableCell> */}
+            <TableCell>运维版本</TableCell>
+            <TableCell>github最新版本</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -44,8 +43,15 @@ export default function Orders(props) {
               <TableCell>{item.node_name}</TableCell>
               <TableCell>{item.node_full_name}</TableCell>
               <TableCell>{item.op_node_version}</TableCell>
-              <TableCell>{item.github_node_version}</TableCell>
-              {/* <TableCell align="right">{`$${row.amount}`}</TableCell> */}
+              <TableCell>
+                <Link
+                  target="_blank"
+                  color="inherit"
+                  href={item.feed_url.substring(0, item.feed_url.length-5)}
+                >
+                  {item.github_node_version}
+                </Link>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
