@@ -137,6 +137,7 @@ export default function Orders(props) {
         sx={{ '& .MuiDialog-paper': { width: '80%', maxHeight: 435 } }}
         maxWidth="xs"
         open={editOpen}
+        onClose={handleEditClose}
       >
         <DialogTitle>修改状态</DialogTitle>
         <DialogContent dividers>
@@ -149,14 +150,18 @@ export default function Orders(props) {
               setRadioValue(event.target.value);
             }}
           >
-            {Object.keys(statusMap).map((option) => (
-              <FormControlLabel
-                value={option}
-                key={option}
-                control={<Radio />}
-                label={statusMap[option].text}
-              />
-            ))}
+            <FormControlLabel
+              value={"noupgrade"}
+              key={"noupgrade"}
+              control={<Radio />}
+              label={"不需要升级"}
+            />
+            <FormControlLabel
+              value={"upgrade"}
+              key={"upgrade"}
+              control={<Radio />}
+              label={"需要升级"}
+            />
           </RadioGroup>
         </DialogContent>
         <DialogActions>
