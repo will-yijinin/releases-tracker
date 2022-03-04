@@ -7,6 +7,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import AddIcon from '@mui/icons-material/Add';
+import Box from '@mui/material/Box';
 import { useForm } from "react-hook-form";
 
 export default function FormDialog() {
@@ -95,6 +96,3 @@ export default function FormDialog() {
     </div>
   );
 }
-
-import Box from '@mui/material/Box';
-

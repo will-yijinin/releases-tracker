@@ -8,20 +8,22 @@ import Popper from '@mui/material/Popper';
 import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
 
-const options = ['Delete'];
+const options = ["修改状态", "DELETE"];
 
 export default function Dropdown(props) {
-  const { item, handleAlertOpen } = props;
+  const { item, handleAlertOpen, handleEditOpen } = props;
 
   // Dropdown state
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
-  const [selectedIndex, setSelectedIndex] = React.useState(1);
 
   const handleMenuItemClick = (event, index) => {
-    setSelectedIndex(index);
     setOpen(false);
-    handleAlertOpen(item);
+    if(index===0){
+      handleEditOpen && handleEditOpen(item);
+    }else{
+      handleAlertOpen && handleAlertOpen(item);
+    }
   };
 
   const handleToggle = () => {
@@ -71,8 +73,6 @@ export default function Dropdown(props) {
                   {options.map((option, index) => (
                     <MenuItem
                       key={option}
-                      disabled={index === 2}
-                      selected={index === selectedIndex}
                       onClick={(event) => {
                         handleMenuItemClick(event, index)
                       }}

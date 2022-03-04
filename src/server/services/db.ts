@@ -12,6 +12,7 @@ const tableName = "local";
  * op_node_version: TEXT, 运维节点版本
  * node_name: TEXT
  * node_full_name: TEXT
+ * status: TEXT, "SAME", "UNCONFIRMED", "CONFIRMED", "WAITING"
  */
 
 async function db_run(query: string, params?: string[]){

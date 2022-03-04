@@ -14,7 +14,15 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import AddForm from "./AddForm";
+import Alert from '@mui/material/Alert';
 import HttpRequestClient from "../utils/request";
+
+const statusMap = {
+  "SAME": {text: "一致", severity: "success"},
+  "UNCONFIRMED": {text: "未确认", severity: "error"},
+  "CONFIRMED": {text: "已确认 - 不需升级", severity: "success"},
+  "WAITING": {text: "已确认 - 待处理", severity: "warning"},
+};
 
 export default function Orders(props) {
   const { nodeList } = props;
@@ -30,6 +38,17 @@ export default function Orders(props) {
     setAlertOpen(false);
   };
 
+  // Edit Dialog state
+  const [editOpen, setEditOpen] = React.useState(false);
+  const [editItem, setEditItem] = React.useState({node_full_name: ""});
+  const handleEditOpen = (item) => {
+    setEditOpen(true);
+    setEditItem(item);
+  }
+  const handleEditClose = () => {
+    setEditOpen(false);
+  };
+
   return (
     <React.Fragment>
       <Title>节点版本</Title>
@@ -40,6 +59,7 @@ export default function Orders(props) {
             <TableCell>链全称</TableCell>
             <TableCell>运维版本</TableCell>
             <TableCell>github最新版本</TableCell>
+            <TableCell>状态</TableCell>
             <TableCell>
               <AddForm />
             </TableCell>
@@ -61,15 +81,25 @@ export default function Orders(props) {
                 </Link>
               </TableCell>
               <TableCell>
+                <Alert
+                  severity={statusMap[item.status]?.severity || "warning"}
+                  style={{padding: "0px 10px"}}
+                >
+                  {statusMap[item.status]?.text || "无状态"}
+                </Alert>
+              </TableCell>
+              <TableCell>
                 <Dropdown
                   item={item}
                   handleAlertOpen={handleAlertOpen}
+                  handleEditOpen={handleEditOpen}
                 />
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+      {/* Alert Dialog */}
       <Dialog
         open={alertOpen}
         onClose={handleAlertClose}
@@ -97,6 +127,8 @@ export default function Orders(props) {
           </Button>
         </DialogActions>
       </Dialog>
+      {/* Edit Dialog */}
+
     </React.Fragment>
   );
 }
