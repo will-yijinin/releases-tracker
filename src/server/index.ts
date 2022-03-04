@@ -4,8 +4,6 @@ const express = require("express");
 const cors = require("cors");
 const { addFeed, deleteFeed, updateOpNodeVersion } = require("./routes");
 
-// TODO: ui: material ui
-// TODO: next.js
 // TODO: auth中间件
 // TODO: 竞品的公告网站
 const app = express();
