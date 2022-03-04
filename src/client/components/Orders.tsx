@@ -9,9 +9,27 @@ import Title from './Title';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import Dropdown from "./Dropdown";
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import HttpRequestClient from "../utils/request";
 
 export default function Orders(props) {
   const { nodeList } = props;
+
+  // Alert Dialog state
+  const [alertOpen, setAlertOpen] = React.useState(false);
+  const [alertItem, setAlertItem] = React.useState({node_full_name: ""});
+  const handleAlertOpen = (item) => {
+    setAlertOpen(true);
+    setAlertItem(item);
+  }
+  const handleAlertClose = () => {
+    setAlertOpen(false);
+  };
+
   return (
     <React.Fragment>
       <Title>节点版本</Title>
@@ -45,12 +63,42 @@ export default function Orders(props) {
                 </Link>
               </TableCell>
               <TableCell>
-                <Dropdown item={item} />
+                <Dropdown
+                  item={item}
+                  handleAlertOpen={handleAlertOpen}
+                />
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+      <Dialog
+        open={alertOpen}
+        onClose={handleAlertClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"删除这条链?"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            您将发出删除 <b>{alertItem.node_full_name}</b> 的申请。
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleAlertClose}>否</Button>
+          <Button
+            onClick={()=>{
+              handleAlertClose();
+              
+            }}
+            autoFocus
+          >
+            是
+          </Button>
+        </DialogActions>
+      </Dialog>
     </React.Fragment>
   );
 }

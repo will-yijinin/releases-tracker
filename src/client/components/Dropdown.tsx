@@ -7,33 +7,21 @@ import Paper from '@mui/material/Paper';
 import Popper from '@mui/material/Popper';
 import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import HttpRequestClient from "../utils/request";
 
 const options = ['Delete'];
 
 export default function Dropdown(props) {
-  const { item } = props;
+  const { item, handleAlertOpen } = props;
 
   // Dropdown state
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
   const [selectedIndex, setSelectedIndex] = React.useState(1);
 
-  // Alert Dialog state
-  const [alertOpen, setAlertOpen] = React.useState(false);
-  const handleAlertClose = () => {
-    setAlertOpen(false);
-  };
-
   const handleMenuItemClick = (event, index) => {
     setSelectedIndex(index);
     setOpen(false);
-    setAlertOpen(true);
+    handleAlertOpen(item);
   };
 
   const handleToggle = () => {
@@ -98,33 +86,6 @@ export default function Dropdown(props) {
           </Grow>
         )}
       </Popper>
-      <Dialog
-        open={alertOpen}
-        onClose={handleAlertClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {"删除这条链?"}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            您将发出删除 <b>{item.node_full_name}</b> 的申请。
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleAlertClose}>否</Button>
-          <Button
-            onClick={()=>{
-              handleAlertClose();
-              
-            }}
-            autoFocus
-          >
-            是
-          </Button>
-        </DialogActions>
-      </Dialog>
     </React.Fragment>
   )
 }
