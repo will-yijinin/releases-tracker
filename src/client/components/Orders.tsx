@@ -45,7 +45,7 @@ export default function Orders(props) {
                 </Link>
               </TableCell>
               <TableCell>
-                <Dropdown />
+                <Dropdown item={item} />
               </TableCell>
             </TableRow>
           ))}
