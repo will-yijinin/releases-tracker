@@ -15,6 +15,9 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import AddForm from "./AddForm";
 import Alert from '@mui/material/Alert';
+import RadioGroup from '@mui/material/RadioGroup';
+import Radio from '@mui/material/Radio';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import HttpRequestClient from "../utils/request";
 
 const statusMap = {
@@ -40,7 +43,8 @@ export default function Orders(props) {
 
   // Edit Dialog state
   const [editOpen, setEditOpen] = React.useState(false);
-  const [editItem, setEditItem] = React.useState({node_full_name: ""});
+  const [editItem, setEditItem] = React.useState({status: ""});
+  const [radioValue, setRadioValue] = React.useState("");
   const handleEditOpen = (item) => {
     setEditOpen(true);
     setEditItem(item);
@@ -48,6 +52,7 @@ export default function Orders(props) {
   const handleEditClose = () => {
     setEditOpen(false);
   };
+  const radioGroupRef = React.useRef(null);
 
   return (
     <React.Fragment>
@@ -128,7 +133,41 @@ export default function Orders(props) {
         </DialogActions>
       </Dialog>
       {/* Edit Dialog */}
-
+      <Dialog
+        sx={{ '& .MuiDialog-paper': { width: '80%', maxHeight: 435 } }}
+        maxWidth="xs"
+        open={editOpen}
+      >
+        <DialogTitle>修改状态</DialogTitle>
+        <DialogContent dividers>
+          <RadioGroup
+            ref={radioGroupRef}
+            aria-label="ringtone"
+            name="ringtone"
+            value={radioValue}
+            onChange={(event)=>{
+              setRadioValue(event.target.value);
+            }}
+          >
+            {Object.keys(statusMap).map((option) => (
+              <FormControlLabel
+                value={option}
+                key={option}
+                control={<Radio />}
+                label={statusMap[option].text}
+              />
+            ))}
+          </RadioGroup>
+        </DialogContent>
+        <DialogActions>
+          <Button autoFocus onClick={handleEditClose}>
+            取消
+          </Button>
+          <Button onClick={()=>{}}>
+            确认
+          </Button>
+        </DialogActions>
+      </Dialog>
     </React.Fragment>
   );
 }
