@@ -6,22 +6,9 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Title from './Title';
-
-// Generate Order Data
-function createData(
-  id: number,
-  date: string,
-  name: string,
-  shipTo: string,
-  paymentMethod: string,
-  amount: number,
-) {
-  return { id, date, name, shipTo, paymentMethod, amount };
-}
-
-function preventDefault(event: React.MouseEvent) {
-  event.preventDefault();
-}
+import Button from '@mui/material/Button';
+import AddIcon from '@mui/icons-material/Add';
+import Dropdown from "./Dropdown";
 
 export default function Orders(props) {
   const { nodeList } = props;
@@ -35,6 +22,11 @@ export default function Orders(props) {
             <TableCell>链全称</TableCell>
             <TableCell>运维版本</TableCell>
             <TableCell>github最新版本</TableCell>
+            <TableCell>
+              <Button color="inherit">
+                <AddIcon />
+              </Button>
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -51,6 +43,9 @@ export default function Orders(props) {
                 >
                   {item.github_node_version}
                 </Link>
+              </TableCell>
+              <TableCell>
+                <Dropdown />
               </TableCell>
             </TableRow>
           ))}
