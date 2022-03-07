@@ -7,11 +7,11 @@ const tableName = "local";
  * 数据库表结构：
  * feed_url: TEXT
  * lark_url: TEXT
+ * node_name: TEXT
+ * node_full_name: TEXT
  * current_feed: TEXT
  * github_node_version: TEXT, github节点版本
  * op_node_version: TEXT, 运维节点版本
- * node_name: TEXT
- * node_full_name: TEXT
  * status: TEXT, "SAME", "UNCONFIRMED", "CONFIRMED", "WAITING"
  */
 
@@ -44,10 +44,12 @@ export async function init(){
         `CREATE TABLE IF NOT EXISTS ${tableName} (
             feed_url TEXT PRIMARY KEY,
             lark_url TEXT,
+            node_name TEXT,
+            node_full_name TEXT,
             current_feed TEXT,
             github_node_version TEXT,
             op_node_version TEXT,
-            node_name TEXT
+            status TEXT
         )`
     );
 }
@@ -55,6 +57,13 @@ export async function init(){
 export async function listSubscriptions() {
     const rows = await db_select(
         `SELECT * FROM ${tableName}`
+    );
+    return rows;
+};
+
+export async function filterSubscriptions(criteria) {
+    const rows = await db_select(
+        `SELECT * FROM ${tableName} WHERE node_name IN (${criteria})`
     );
     return rows;
 };
@@ -100,7 +109,6 @@ export async function updateOpNodeVersion(array: any[]) {
 };
 
 export async function updateNodeFullName(array: any[]) {
-    console.log(array)
     var statement = db.prepare(
         `UPDATE ${tableName} SET node_full_name = ?
         WHERE node_name=?`
@@ -113,6 +121,20 @@ export async function updateNodeFullName(array: any[]) {
 
     return;
 };
+
+export async function updateStatus(array: any[]) {
+    var statement = db.prepare(
+        `UPDATE ${tableName} SET status = ?
+        WHERE node_name=?`
+    );
+
+    for (var i = 0; i < array.length; i++) {
+        const item = array[i];
+        statement.run(item.status, item.nodeName);
+    }
+
+    return;
+}
 
 export async function deleteTable(tableName: string) {
     const res = await db_run(

@@ -84,10 +84,33 @@ async function updateOpNodeVersion(req: any, res: any){
 			if (data.length === 0) {
 				return res.sendStatus(400);
 			}
-			let resp = JSON.parse(data.toString());
+			let updates = JSON.parse(data.toString());
 			try{
-				await db.updateOpNodeVersion(resp);
+				// 更新status
+				const criteria = updates.map((ele, index)=>{
+					if(index===updates.length-1){
+						return `'${ele.nodeName}'`;
+					}
+					return `'${ele.nodeName}', `;
+				})?.join("");
+				// 找到数据库中对应这次更新的运维节点的链列表
+				const subscriptions: any = await db.filterSubscriptions(criteria);
+				const updateStatusQueue: any = [];
+				subscriptions.forEach(oldOne=>{
+					const newOne = updates.find(ele=>ele.nodeName===oldOne.node_name);
+					// 如果新的运维节点版本等于数据库中github节点版本，则修改状态为SAME
+					if(newOne.nodeVersion===oldOne.github_node_version){
+						updateStatusQueue.push({nodeName: newOne.nodeName, status: "SAME"});
+					}
+				});
+				await db.updateStatus(updateStatusQueue);
+
+				// 更新节点版本
+				await db.updateOpNodeVersion(updates);
+
+				// 返回成功
 				res.send({code:200, message:"success"});
+
 			}catch(error: any){
 				res.send(error);
 			}
@@ -101,9 +124,9 @@ async function updateNodeFullName(req: any, res: any){
 			if (data.length === 0) {
 				return res.sendStatus(400);
 			}
-			let resp = JSON.parse(data.toString());
+			let updates = JSON.parse(data.toString());
 			try{
-				await db.updateNodeFullName(resp);
+				await db.updateNodeFullName(updates);
 				res.send({code:200, message:"success"});
 			}catch(error: any){
 				res.send(error);
