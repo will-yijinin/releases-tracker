@@ -31,9 +31,6 @@ async function main() {
 	);
 	const subscriptions: any = res.data;
 	console.log(subscriptions.length);
-	console.log(subscriptions.filter(ele=>{
-		return ele.node_name==="dot-sidecar" || ele.node_name==="sol"
-	}));
 
 	for (let i = 0; i < subscriptions.length; i++) {
 		const { feed_url, lark_url, current_feed } = subscriptions[i];
