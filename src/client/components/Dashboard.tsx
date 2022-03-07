@@ -17,8 +17,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { mainListItems } from './listItems';
 import Orders from './Orders';
 import { useSelector, useDispatch } from 'react-redux';
-import { setNodeList } from './dashboardSlice';
-import HttpRequestClient from "../utils/request";
+import { fetchNodeList } from './dashboardSlice';
 
 function Copyright(props: any) {
   return (
@@ -89,12 +88,7 @@ function DashboardContent() {
   const dispatch = useDispatch();
 
   const fetchData = async () => {
-    const res = await HttpRequestClient.get("/list/subscriptions");
-    const array = res?.data?.filter(ele=>ele.node_name);
-    array.sort((a, b) => {
-      return a.node_name.normalize().localeCompare(b.node_name.normalize());
-    });
-    dispatch(setNodeList(array));
+    dispatch(fetchNodeList());
   };
 
   React.useEffect(() => {

@@ -19,6 +19,8 @@ import RadioGroup from '@mui/material/RadioGroup';
 import Radio from '@mui/material/Radio';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import HttpRequestClient from "../utils/request";
+import { useDispatch } from 'react-redux';
+import { fetchNodeList } from './dashboardSlice';
 
 const statusMap = {
   "SAME": {text: "一致", severity: "success"},
@@ -43,7 +45,7 @@ export default function Orders(props) {
 
   // Edit Dialog state
   const [editOpen, setEditOpen] = React.useState(false);
-  const [editItem, setEditItem] = React.useState({status: ""});
+  const [editItem, setEditItem] = React.useState({node_name: ""});
   const [radioValue, setRadioValue] = React.useState("");
   const handleEditOpen = (item) => {
     setEditOpen(true);
@@ -52,6 +54,21 @@ export default function Orders(props) {
   const handleEditClose = () => {
     setEditOpen(false);
   };
+
+  const dispatch = useDispatch();
+  const handleEditConfirm = async () => {
+    const endpint = radioValue==="noupgrade" ? "/confirm/no-update" : "/confirm/waiting";
+    const res = await HttpRequestClient.post(
+      endpint,
+      {nodeName: editItem.node_name}
+    );
+    if(res.code===200){
+      handleEditClose();
+      dispatch(fetchNodeList());
+    }else{
+      // TODO: error alert
+    }
+  }
   const radioGroupRef = React.useRef(null);
 
   return (
@@ -168,7 +185,7 @@ export default function Orders(props) {
           <Button autoFocus onClick={handleEditClose}>
             取消
           </Button>
-          <Button onClick={()=>{}}>
+          <Button onClick={handleEditConfirm}>
             确认
           </Button>
         </DialogActions>
