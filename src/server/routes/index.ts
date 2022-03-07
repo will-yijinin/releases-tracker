@@ -14,8 +14,12 @@ module.exports = app => {
 	app.post("/delete/feed", [
 		deleteFeed
 	]);
+
+	app.post("/update/feed", [
+		updateCurrentFeed
+	]);
 	
-	app.post("/update/nodeversion", [
+	app.post("/update/node-versions", [
 		updateOpNodeVersion
 	]);
 
@@ -74,6 +78,23 @@ async function deleteFeed(req: any, res: any){
 		concat(async data => {
 			let { feedUrls } = JSON.parse(data.toString());
 			res.send({code:200, message:"success", data: feedUrls});
+		})
+	);
+};
+
+async function updateCurrentFeed(req: any, res: any){
+	req.pipe(
+		concat(async data => {
+			if (data.length === 0) {
+				return res.sendStatus(400);
+			}
+			let { feedUrl, updateFeed, githubNodeVersion } = JSON.parse(data.toString());
+			try{
+				await db.updateCurrentFeed(feedUrl, updateFeed, githubNodeVersion);
+				res.send({code:200, message:"success"});
+			}catch(error: any){
+				res.send({code: error.code, message:  error});
+			}
 		})
 	);
 };
