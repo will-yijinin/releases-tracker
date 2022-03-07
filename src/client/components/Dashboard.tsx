@@ -16,6 +16,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { mainListItems } from './listItems';
 import Orders from './Orders';
+import { useSelector, useDispatch } from 'react-redux';
+import { setNodeList } from './dashboardSlice';
 import HttpRequestClient from "../utils/request";
 
 function Copyright(props: any) {
@@ -83,16 +85,16 @@ const mdTheme = createTheme();
 
 function DashboardContent() {
   const [open, setOpen] = React.useState(false);
-  const [nodeList, setNodeList] = React.useState([]);
+  const nodeList = useSelector((state: any) => state.dashboard.nodeList);
+  const dispatch = useDispatch();
 
   const fetchData = async () => {
-
     const res = await HttpRequestClient.get("/list/subscriptions");
     const array = res?.data?.filter(ele=>ele.node_name);
     array.sort((a, b) => {
       return a.node_name.normalize().localeCompare(b.node_name.normalize());
     });
-    setNodeList(array);
+    dispatch(setNodeList(array));
   };
 
   React.useEffect(() => {
@@ -101,7 +103,7 @@ function DashboardContent() {
     return () => {
       clearInterval(id);
     };
-  }, [JSON.stringify(nodeList)]);
+  }, []);
 
   const toggleDrawer = () => {
     setOpen(!open);
