@@ -40,7 +40,7 @@ module.exports = app => {
 async function listSubscriptions(_, res: any){
 	try{
 		const subscriptions = await db.listSubscriptions();
-		res.send(subscriptions);
+		res.send({code:200, message:"success", data: subscriptions});
 	}catch(error: any){
 		res.send(error);
 	}
@@ -189,7 +189,7 @@ async function confirmNoUpdate(req: any, res: any){
 			}
 			let { nodeName } = JSON.parse(data.toString());
 			try{
-				const updates: any = {nodeName, status: "CONFIRMED"};
+				const updates: any = [{nodeName, status: "CONFIRMED"}];
 				await db.updateStatus(updates, "node_name", "nodeName");
 				res.send({code:200, message:"success"});
 			}catch(error: any){
@@ -207,7 +207,7 @@ async function confirmWaiting(req: any, res: any){
 			}
 			let { nodeName } = JSON.parse(data.toString());
 			try{
-				const updates: any = {nodeName, status: "WAITING"};
+				const updates: any = [{nodeName, status: "WAITING"}];
 				await db.updateStatus(updates, "node_name", "nodeName");
 				res.send({code:200, message:"success"});
 			}catch(error: any){

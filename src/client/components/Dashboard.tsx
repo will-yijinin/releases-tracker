@@ -86,11 +86,8 @@ function DashboardContent() {
   const [nodeList, setNodeList] = React.useState([]);
 
   const fetchData = async () => {
-    const port = process.env.PORT || 8000;
 
-    const res = await HttpRequestClient.get(
-      `http://127.0.0.1:${port}/list/subscriptions`
-    );
+    const res = await HttpRequestClient.get("/list/subscriptions");
     const array = res?.data?.filter(ele=>ele.node_name);
     array.sort((a, b) => {
       return a.node_name.normalize().localeCompare(b.node_name.normalize());

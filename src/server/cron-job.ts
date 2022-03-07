@@ -29,7 +29,7 @@ async function main() {
     const res = await axios.get(
 		`http://127.0.0.1:${port}/list/subscriptions`
 	);
-	const subscriptions: any = res.data;
+	const subscriptions: any = res.data.data;
 	console.log(subscriptions.length);
 
 	for (let i = 0; i < subscriptions.length; i++) {

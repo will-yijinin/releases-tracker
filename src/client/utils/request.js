@@ -1,4 +1,5 @@
 const axios = require("axios").default;
+const port = process.env.PORT || 8000;
 
 function constructHeader(headers) {
     if (!headers) {
@@ -22,15 +23,37 @@ function constructHeader(headers) {
     };
 }
 
+const handleError = async (error) => {
+    console.log(error)
+    return error;
+}
+
 module.exports = {
-    get: (url)=>{
-        return axios.get(url, {
-            // headers: constructHeader(headers)
-        })
+    get: async (endpoint) => {
+        const resp = await axios.get(
+            `http://127.0.0.1:${port}${endpoint}`,
+            {
+                // headers: constructHeader(headers)
+            }
+        );
+        if(resp?.status !== 200 || resp?.data?.code !== 200) {
+            handleError(resp);
+        }else{
+            return resp.data;
+        }
     },
-    post: (url, data)=>{
-        return axios.post(url, data, {
-            // headers: constructHeader(headers)
-        })
+    post: async (endpoint, data) => {
+        const resp = await axios.post(
+            `http://127.0.0.1:${port}${endpoint}`,
+            data,
+            {
+                // headers: constructHeader(headers)
+            }
+        );
+        if(resp?.status !== 200 || resp?.data?.code !== 200) {
+            handleError(resp);
+        }else{
+            return resp.data;
+        }
     }
 };
