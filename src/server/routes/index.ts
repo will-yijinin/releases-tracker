@@ -90,6 +90,21 @@ async function updateCurrentFeed(req: any, res: any){
 			}
 			let { feedUrl, updateFeed, githubNodeVersion } = JSON.parse(data.toString());
 			try{
+				// 更新status
+				// 找到数据库中对应这次更新的运维节点的链列表
+				const subscriptions: any = await db.filterSubscriptions("feed_url", feedUrl);
+				const updateStatusQueue: any = [];
+				subscriptions.forEach(oldOne=>{
+					// 如果新的运维节点版本等于数据库中github节点版本，则修改状态为SAME，否则修改状态为UNCONFIRMED
+					if(oldOne.op_node_version===githubNodeVersion){
+						updateStatusQueue.push({feedUrl, status: "SAME"});
+					}else{
+						updateStatusQueue.push({feedUrl, status: "UNCONFIRMED"});
+					}
+				});
+				await db.updateStatus(updateStatusQueue, "feed_url", "feedUrl");
+
+				// 更新github最新feed及节点版本
 				await db.updateCurrentFeed(feedUrl, updateFeed, githubNodeVersion);
 				res.send({code:200, message:"success"});
 			}catch(error: any){
@@ -115,18 +130,20 @@ async function updateOpNodeVersion(req: any, res: any){
 					return `'${ele.nodeName}', `;
 				})?.join("");
 				// 找到数据库中对应这次更新的运维节点的链列表
-				const subscriptions: any = await db.filterSubscriptions(criteria);
+				const subscriptions: any = await db.filterSubscriptions("node_name", criteria);
 				const updateStatusQueue: any = [];
 				subscriptions.forEach(oldOne=>{
 					const newOne = updates.find(ele=>ele.nodeName===oldOne.node_name);
-					// 如果新的运维节点版本等于数据库中github节点版本，则修改状态为SAME
+					// 如果新的运维节点版本等于数据库中github节点版本，则修改状态为SAME，否则修改状态为UNCONFIRMED
 					if(newOne.nodeVersion===oldOne.github_node_version){
 						updateStatusQueue.push({nodeName: newOne.nodeName, status: "SAME"});
+					}else{
+						updateStatusQueue.push({nodeName: newOne.nodeName, status: "UNCONFIRMED"});
 					}
 				});
-				await db.updateStatus(updateStatusQueue);
+				await db.updateStatus(updateStatusQueue, "node_name", "nodeName");
 
-				// 更新节点版本
+				// 更新运维节点版本
 				await db.updateOpNodeVersion(updates);
 
 				// 返回成功

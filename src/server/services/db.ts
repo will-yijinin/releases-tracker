@@ -61,9 +61,9 @@ export async function listSubscriptions() {
     return rows;
 };
 
-export async function filterSubscriptions(criteria) {
+export async function filterSubscriptions(column, criteria) {
     const rows = await db_select(
-        `SELECT * FROM ${tableName} WHERE node_name IN (${criteria})`
+        `SELECT * FROM ${tableName} WHERE ${column} IN (${criteria})`
     );
     return rows;
 };
@@ -122,15 +122,15 @@ export async function updateNodeFullName(array: any[]) {
     return;
 };
 
-export async function updateStatus(array: any[]) {
+export async function updateStatus(array: any[], column, criteria) {
     var statement = db.prepare(
         `UPDATE ${tableName} SET status = ?
-        WHERE node_name=?`
+        WHERE ${column}=?`
     );
 
     for (var i = 0; i < array.length; i++) {
         const item = array[i];
-        statement.run(item.status, item.nodeName);
+        statement.run(item.status, item[`${criteria}`]);
     }
 
     return;
