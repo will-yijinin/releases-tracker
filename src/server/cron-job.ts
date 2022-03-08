@@ -18,7 +18,6 @@ async function updateCurrentFeed(feed_url: string, updateFeed: any){
 	if(githubNodeVersion.substring(0,1).toLowerCase()==="v"){
 		githubNodeVersion = githubNodeVersion.substring(1);
 	}
-	console.log(`http://127.0.0.1:${port}/update/feed`);
 	await axios.post(
 		`http://127.0.0.1:${port}/update/feed`,
 		{feedUrl: feed_url, updateFeed, githubNodeVersion},

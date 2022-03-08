@@ -8,7 +8,9 @@
     "ls": "pm2 ls",
     "stop-server": "pm2 delete server",
     "stop-cron-job": "pm2 delete cron-job",
-    "test": "export NODE_ENV='development' && ts-node -r dotenv/config ./src/server/index.ts && ts-node ./src/server/cron-job.ts",
+    "test-server": "export NODE_ENV='development'&& ts-node ./src/server/index.ts",
+    "test-cron-job": "export NODE_ENV='development' && ts-node ./src/server/cron-job.ts",
+    "test": "export NODE_ENV=test",
     "i": "rm -rf node_modules && npm i",
     "pub": "npm run tsc && npm publish",
     "build": "rm -rf build && tsc"

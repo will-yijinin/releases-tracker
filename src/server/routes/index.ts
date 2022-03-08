@@ -91,14 +91,12 @@ async function deleteFeed(req: any, res: any){
 };
 
 async function updateCurrentFeed(req: any, res: any){
-	console.log("hit updateCurrentFeed");
 	req.pipe(
 		concat(async data => {
 			if (data.length === 0) {
 				return res.sendStatus(400);
 			}
 			let { feedUrl, updateFeed, githubNodeVersion } = JSON.parse(data.toString());
-			console.log(feedUrl, updateFeed, githubNodeVersion)
 			try{
 				// 更新status
 				// 找到数据库中对应这次更新的运维节点的链列表
@@ -113,10 +111,8 @@ async function updateCurrentFeed(req: any, res: any){
 					}
 				});
 				await db.updateStatus(updateStatusQueue, "feed_url", "feedUrl");
-				console.log("hit after updateStatus")
 				// 更新github最新feed及节点版本
 				await db.updateCurrentFeed(feedUrl, updateFeed, githubNodeVersion);
-				console.log("hit after updateCurrentFeed")
 				res.send({code:200, message:"success"});
 			}catch(error: any){
 				res.send({code: error.code, message:  error});
